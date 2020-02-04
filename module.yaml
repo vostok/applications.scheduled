@@ -1,0 +1,17 @@
+notests *default:
+  build:
+    target: Vostok.Applications.Scheduled.sln
+    configuration: NoTests
+    tool:
+      name: dotnet
+
+  install:
+    - Vostok.Applications.Scheduled/bin/Release/netstandard2.0/Vostok.Applications.Scheduled.dll
+
+  deps:
+    - vostok.devtools
+
+full-build > notests:
+  build:
+    target: Vostok.Applications.Scheduled.sln
+    configuration: Release
