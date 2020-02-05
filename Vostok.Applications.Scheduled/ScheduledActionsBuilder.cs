@@ -8,12 +8,12 @@ using Vostok.Logging.Abstractions;
 namespace Vostok.Applications.Scheduled
 {
     [PublicAPI]
-    public class ScheduledApplicationBuilder : IScheduledApplicationBuilder
+    public class ScheduledActionsBuilder : IScheduledActionsBuilder
     {
         private readonly ILog log;
         private readonly List<ScheduledAction> actions;
 
-        public ScheduledApplicationBuilder(ILog log)
+        public ScheduledActionsBuilder(ILog log)
         {
             this.log = log;
 
@@ -23,16 +23,16 @@ namespace Vostok.Applications.Scheduled
         public IScheduledActionsRunner BuildRunner()
             => new ScheduledActionsRunner(actions.Select(action => new ScheduledActionRunner(action, log)).ToArray());
 
-        public IScheduledApplicationBuilder Schedule(string name, IScheduler scheduler, Action<IScheduledActionContext> payload)
+        public IScheduledActionsBuilder Schedule(string name, IScheduler scheduler, Action<IScheduledActionContext> payload)
             => Schedule(name, scheduler, payload, new ScheduledActionOptions());
 
-        public IScheduledApplicationBuilder Schedule(string name, IScheduler scheduler, Func<IScheduledActionContext, Task> payload)
+        public IScheduledActionsBuilder Schedule(string name, IScheduler scheduler, Func<IScheduledActionContext, Task> payload)
             => Schedule(name, scheduler, payload, new ScheduledActionOptions());
 
-        public IScheduledApplicationBuilder Schedule(string name, IScheduler scheduler, Action<IScheduledActionContext> payload, ScheduledActionOptions options)
+        public IScheduledActionsBuilder Schedule(string name, IScheduler scheduler, Action<IScheduledActionContext> payload, ScheduledActionOptions options)
             => Schedule(name, scheduler, WrapAction(payload), options);
 
-        public IScheduledApplicationBuilder Schedule(string name, IScheduler scheduler, Func<IScheduledActionContext, Task> payload, ScheduledActionOptions options)
+        public IScheduledActionsBuilder Schedule(string name, IScheduler scheduler, Func<IScheduledActionContext, Task> payload, ScheduledActionOptions options)
         {
             actions.Add(new ScheduledAction(name, scheduler, options, payload));
 

@@ -5,25 +5,25 @@ using JetBrains.Annotations;
 namespace Vostok.Applications.Scheduled
 {
     [PublicAPI]
-    public interface IScheduledApplicationBuilder
+    public interface IScheduledActionsBuilder
     {
-        IScheduledApplicationBuilder Schedule(
+        IScheduledActionsBuilder Schedule(
             [NotNull] string name, 
             [NotNull] IScheduler scheduler, 
             [NotNull] Action<IScheduledActionContext> payload);
 
-        IScheduledApplicationBuilder Schedule(
+        IScheduledActionsBuilder Schedule(
             [NotNull] string name, 
             [NotNull] IScheduler scheduler, 
             [NotNull] Func<IScheduledActionContext, Task> payload);
 
-        IScheduledApplicationBuilder Schedule(
+        IScheduledActionsBuilder Schedule(
             [NotNull] string name,
             [NotNull] IScheduler scheduler,
             [NotNull] Action<IScheduledActionContext> payload,
             [NotNull] ScheduledActionOptions options);
 
-        IScheduledApplicationBuilder Schedule(
+        IScheduledActionsBuilder Schedule(
             [NotNull] string name, 
             [NotNull] IScheduler scheduler, 
             [NotNull] Func<IScheduledActionContext, Task> payload, 

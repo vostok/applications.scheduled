@@ -9,11 +9,11 @@ namespace Vostok.Applications.Scheduled
     {
         private volatile IScheduledActionsRunner runner;
 
-        public abstract void Setup([NotNull] IScheduledApplicationBuilder builder, [NotNull] IVostokHostingEnvironment environment);
+        public abstract void Setup([NotNull] IScheduledActionsBuilder builder, [NotNull] IVostokHostingEnvironment environment);
 
         public Task InitializeAsync(IVostokHostingEnvironment environment)
         {
-            var builder = new ScheduledApplicationBuilder(environment.Log);
+            var builder = new ScheduledActionsBuilder(environment.Log);
 
             Setup(builder, environment);
 
