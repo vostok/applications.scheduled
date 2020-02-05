@@ -18,7 +18,7 @@ namespace Vostok.Applications.Scheduled
         public ScheduledActionRunner(ScheduledAction action, ILog log)
         {
             this.action = action;
-            this.log = log.ForContext("Scheduler");
+            this.log = log;
         }
 
         public async Task RunAsync(CancellationToken token)
