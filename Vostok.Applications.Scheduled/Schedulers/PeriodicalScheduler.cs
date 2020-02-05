@@ -8,15 +8,18 @@ namespace Vostok.Applications.Scheduled.Schedulers
     internal class PeriodicalScheduler : IScheduler
     {
         private readonly Func<TimeSpan> periodProvider;
+        private readonly Func<double> jitterProvider;
         private readonly bool delayFirstIteration;
-        private readonly double jitter;
         private readonly AtomicBoolean scheduledFirst;
 
-        public PeriodicalScheduler([NotNull] Func<TimeSpan> periodProvider, bool delayFirstIteration, double jitter)
+        public PeriodicalScheduler(
+            [NotNull] Func<TimeSpan> periodProvider, 
+            [NotNull] Func<double> jitterProvider, 
+            bool delayFirstIteration)
         {
             this.periodProvider = periodProvider ?? throw new ArgumentNullException(nameof(periodProvider));
+            this.jitterProvider = jitterProvider ?? throw new ArgumentNullException(nameof(jitterProvider));
             this.delayFirstIteration = delayFirstIteration;
-            this.jitter = jitter;
 
             scheduledFirst = new AtomicBoolean(false);
         }
@@ -27,11 +30,18 @@ namespace Vostok.Applications.Scheduled.Schedulers
                 return from;
 
             var period = periodProvider();
+            var jitter = jitterProvider();
+
+            period = TimeSpanArithmetics.Max(TimeSpan.Zero, period);
+            jitter = Math.Max(0d, jitter);
+            jitter = Math.Min(1d, jitter);
+
+            var next = from + period;
 
             if (jitter > 0d)
-                period += period.Multiply(ThreadSafeRandom.NextDouble() * jitter * (ThreadSafeRandom.FlipCoin() ? 1d : -1d));
+                next += period.Multiply(ThreadSafeRandom.NextDouble() * jitter * (ThreadSafeRandom.FlipCoin() ? 1d : -1d));
 
-            return from + TimeSpanArithmetics.Max(TimeSpan.Zero, period);
+            return next;
         }
     }
 }

@@ -8,17 +8,17 @@ namespace Vostok.Applications.Scheduled
     [PublicAPI]
     public static class Scheduler
     {
-        public static IScheduler Periodical([NotNull] Func<TimeSpan> periodProvider, double jitter, bool delayFirstIteration = true)
-            => new PeriodicalScheduler(periodProvider, delayFirstIteration, jitter);
+        public static IScheduler Periodical([NotNull] Func<TimeSpan> periodProvider, [NotNull] Func<double> jitterProvider, bool delayFirstIteration = true)
+            => new PeriodicalScheduler(periodProvider, jitterProvider, delayFirstIteration);
 
         public static IScheduler Periodical([NotNull] Func<TimeSpan> periodProvider, bool delayFirstIteration = true)
-            => new PeriodicalScheduler(periodProvider, delayFirstIteration, 0d);
+            => new PeriodicalScheduler(periodProvider, () => 0d, delayFirstIteration);
 
         public static IScheduler Periodical(TimeSpan period, double jitter, bool delayFirstIteration = true)
-            => new PeriodicalScheduler(() => period, delayFirstIteration, jitter);
+            => new PeriodicalScheduler(() => period, () => jitter, delayFirstIteration);
 
         public static IScheduler Periodical(TimeSpan period, bool delayFirstIteration = true)
-            => new PeriodicalScheduler(() => period, delayFirstIteration, 0d);
+            => new PeriodicalScheduler(() => period, () => 0d, delayFirstIteration);
 
         public static IScheduler AlignedPeriodical([NotNull] Func<TimeSpan> periodProvider)
             => new AlignedPeriodicalScheduler(periodProvider);
