@@ -1,17 +1,28 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
 
 namespace Vostok.Applications.Scheduled
 {
     [PublicAPI]
-    public class VostokScheduledApplication : IVostokApplication
+    public abstract class VostokScheduledApplication : IVostokApplication
     {
-        public Task InitializeAsync(IVostokHostingEnvironment environment) =>
-            throw new NotImplementedException();
+        private volatile IScheduledActionsRunner runner;
 
-        public Task RunAsync(IVostokHostingEnvironment environment) =>
-            throw new NotImplementedException();
+        public abstract void Setup([NotNull] IScheduledApplicationBuilder builder, [NotNull] IVostokHostingEnvironment environment);
+
+        public Task InitializeAsync(IVostokHostingEnvironment environment)
+        {
+            var builder = new ScheduledApplicationBuilder(environment.Log);
+
+            Setup(builder, environment);
+
+            runner = builder.BuildRunner();
+
+            return Task.CompletedTask;
+        }
+
+        public Task RunAsync(IVostokHostingEnvironment environment)
+            => runner.RunAsync(environment.ShutdownToken);
     }
 }
