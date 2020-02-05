@@ -1,21 +1,21 @@
 ﻿using System;
-using System.Threading.Tasks;
+using Vostok.Commons.Threading;
 
 namespace Vostok.Applications.Scheduled.Schedulers
 {
     internal class OnDemandScheduler : IScheduler
     {
-        private volatile TaskCompletionSource<bool> signal = new TaskCompletionSource<bool>(false, TaskCreationOptions.RunContinuationsAsynchronously);
+        private volatile AtomicBoolean signal = new AtomicBoolean(false);
 
         public void Demand()
-            => signal.TrySetResult(true);
+            => signal.TrySetTrue();
 
         public DateTimeOffset? ScheduleNext(DateTimeOffset from)
         {
-            if (!signal.Task.IsCompleted)
+            if (!signal)
                 return null;
 
-            signal = new TaskCompletionSource<bool>(false);
+            signal = new AtomicBoolean(false);
 
             return from;
         }
