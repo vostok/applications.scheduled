@@ -50,5 +50,8 @@ namespace Vostok.Applications.Scheduled
             demand = scheduler.Demand;
             return scheduler;
         }
+
+        public static IScheduler Multi([NotNull] params IScheduler[] schedulers)
+            => new MultiScheduler(schedulers);
     }
 }
