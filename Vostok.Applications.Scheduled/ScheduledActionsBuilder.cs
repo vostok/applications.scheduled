@@ -15,13 +15,13 @@ namespace Vostok.Applications.Scheduled
 
         public ScheduledActionsBuilder(ILog log)
         {
-            this.log = log;
+            this.log = log.ForContext("Scheduler");
 
             actions = new List<ScheduledAction>();
         }
 
         public IScheduledActionsRunner BuildRunner()
-            => new ScheduledActionsRunner(actions.Select(action => new ScheduledActionRunner(action, log)).ToArray());
+            => new ScheduledActionsRunner(actions.Select(action => new ScheduledActionRunner(action, log)).ToArray(), log);
 
         public IScheduledActionsBuilder Schedule(string name, IScheduler scheduler, Action<IScheduledActionContext> payload)
             => Schedule(name, scheduler, payload, new ScheduledActionOptions());

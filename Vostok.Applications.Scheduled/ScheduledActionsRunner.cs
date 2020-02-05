@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Vostok.Commons.Helpers.Extensions;
+using Vostok.Logging.Abstractions;
 
 // ReSharper disable AccessToDisposedClosure
 
@@ -12,12 +13,22 @@ namespace Vostok.Applications.Scheduled
     internal class ScheduledActionsRunner : IScheduledActionsRunner
     {
         private readonly IReadOnlyList<ScheduledActionRunner> runners;
+        private readonly ILog log;
 
-        public ScheduledActionsRunner(IReadOnlyList<ScheduledActionRunner> runners)
-            => this.runners = runners;
+        public ScheduledActionsRunner(IReadOnlyList<ScheduledActionRunner> runners, ILog log)
+        {
+            this.runners = runners;
+            this.log = log;
+        }
 
         public async Task RunAsync(CancellationToken token)
         {
+            if (!runners.Any())
+            {
+                log.Warn("No actions have been scheduled: nothing to run.");
+                return;
+            }
+
             using (var sharedCancellation = new CancellationTokenSource())
             using (var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(token, sharedCancellation.Token))
             {
