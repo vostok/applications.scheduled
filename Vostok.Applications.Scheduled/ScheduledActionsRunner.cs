@@ -35,15 +35,15 @@ namespace Vostok.Applications.Scheduled
                 var runnerTasks = runners.Select(runner => runner.RunAsync(linkedCancellation.Token)).ToList();
                 var runnerTasksSilent = runnerTasks.Select(task => task.SilentlyContinue());
 
-                var firstCompletedTask = await Task.WhenAny(runnerTasks).ConfigureAwait(false);
+                var firstCompletedTask = await Task.WhenAny(runnerTasks);
 
                 sharedCancellation.Cancel();
 
-                await Task.WhenAll(runnerTasksSilent).ConfigureAwait(false);
+                await Task.WhenAll(runnerTasksSilent);
 
                 try
                 {
-                    await firstCompletedTask.ConfigureAwait(false);
+                    await firstCompletedTask;
                 }
                 catch (OperationCanceledException)
                 {

@@ -34,11 +34,11 @@ namespace Vostok.Applications.Scheduled
                     {
                         using (new OperationContextToken($"{++iteration}"))
                         {
-                            await WaitForNextExecutionAsync(lastExecutionTime, token).ConfigureAwait(false);
+                            await WaitForNextExecutionAsync(lastExecutionTime, token);
 
                             lastExecutionTime = PreciseDateTime.Now;
 
-                            await ExecutePayloadAsync(lastExecutionTime, token).ConfigureAwait(false);
+                            await ExecutePayloadAsync(lastExecutionTime, token);
                         }
                     }
                 }
@@ -65,7 +65,7 @@ namespace Vostok.Applications.Scheduled
 
                 if (nextExecutionTime == null)
                 {
-                    await Task.Delay(action.Options.ActualizationPeriod, token).ConfigureAwait(false);
+                    await Task.Delay(action.Options.ActualizationPeriod, token);
                     continue;
                 }
 
@@ -75,15 +75,15 @@ namespace Vostok.Applications.Scheduled
                 var timeToWait = TimeSpanArithmetics.Max(TimeSpan.Zero, nextExecutionTime.Value - PreciseDateTime.Now);
                 if (timeToWait > action.Options.ActualizationPeriod)
                 {
-                    await Task.Delay(action.Options.ActualizationPeriod, token).ConfigureAwait(false);
+                    await Task.Delay(action.Options.ActualizationPeriod, token);
                     continue;
                 }
 
                 if (timeToWait > TimeSpan.Zero)
-                    await Task.Delay(timeToWait, token).ConfigureAwait(false);
+                    await Task.Delay(timeToWait, token);
 
                 while (PreciseDateTime.Now < nextExecutionTime)
-                    await Task.Delay(1.Milliseconds(), token).ConfigureAwait(false);
+                    await Task.Delay(1.Milliseconds(), token);
 
                 return;
             }
@@ -110,7 +110,7 @@ namespace Vostok.Applications.Scheduled
                 {
                     var watch = Stopwatch.StartNew();
 
-                    await action.Payload(context).ConfigureAwait(false);
+                    await action.Payload(context);
 
                     watch.Stop();
 
@@ -139,7 +139,7 @@ namespace Vostok.Applications.Scheduled
             if (action.Options.AllowOverlappingExecution)
                 return;
 
-            await payloadTask.ConfigureAwait(false);
+            await payloadTask;
         }
 
         private DateTimeOffset? GetNextExecutionTime(DateTimeOffset from)
