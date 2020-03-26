@@ -32,7 +32,7 @@ namespace Vostok.Applications.Scheduled
             using (var sharedCancellation = new CancellationTokenSource())
             using (var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(token, sharedCancellation.Token))
             {
-                var runnerTasks = runners.Select(runner => runner.RunAsync(linkedCancellation.Token));
+                var runnerTasks = runners.Select(runner => runner.RunAsync(linkedCancellation.Token)).ToList();
                 var runnerTasksSilent = runnerTasks.Select(task => task.SilentlyContinue());
 
                 var firstCompletedTask = await Task.WhenAny(runnerTasks).ConfigureAwait(false);
