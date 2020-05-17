@@ -30,3 +30,6 @@ full-build > notests:
   build:
     target: Vostok.Applications.Scheduled.sln
     configuration: Release
+
+  deps:
+    - vostok.commons.testing/src

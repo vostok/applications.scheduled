@@ -1,23 +1,64 @@
 ﻿using System;
-using Vostok.Commons.Threading;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Signal = System.Threading.Tasks.TaskCompletionSource<bool>;
 
 namespace Vostok.Applications.Scheduled.Schedulers
 {
-    internal class OnDemandScheduler : IScheduler
+    internal class OnDemandScheduler : IScheduler, IScheduledActionEventListener
     {
-        private volatile AtomicBoolean signal = new AtomicBoolean(false);
+        private readonly object sync = new object();
+        private readonly List<Signal> signals = new List<Signal>();
+        private volatile bool activated;
 
         public void Demand()
-            => signal.TrySetTrue();
+        {
+            lock (sync)
+                activated = true;
+        }
+
+        public Task DemandWithFeedback()
+        {
+            var signal = new Signal(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            lock (sync)
+            {
+                signals.Add(signal);
+                activated = true;
+            }
+
+            return signal.Task;
+        }
 
         public DateTimeOffset? ScheduleNext(DateTimeOffset from)
         {
-            if (!signal)
-                return null;
+            lock (sync)
+            {
+                if (!activated)
+                    return null;
 
-            signal = new AtomicBoolean(false);
+                activated = false;
 
-            return from;
+                return from;
+            }
+        }
+
+        public void OnSuccessfulIteration(IScheduler source)
+        {
+            lock (sync)
+            {
+                signals.ForEach(signal => signal.TrySetResult(true));
+                signals.Clear();
+            }
+        }
+
+        public void OnFailedIteration(IScheduler source, Exception error)
+        {
+            lock (sync)
+            {
+                signals.ForEach(signal => signal.TrySetException(error));
+                signals.Clear();
+            }
         }
     }
 }
