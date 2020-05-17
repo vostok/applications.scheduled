@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Vostok.Applications.Scheduled.Schedulers
 {
-    internal class MultiScheduler : IScheduler
+    internal class MultiScheduler : IScheduler, IScheduledActionEventListener
     {
         private readonly IReadOnlyList<IScheduler> schedulers;
 
@@ -30,6 +30,18 @@ namespace Vostok.Applications.Scheduled.Schedulers
             }
 
             return (nearest, nearestScheduler);
+        }
+
+        public void OnSuccessfulIteration(IScheduler source)
+        {
+            foreach (var scheduler in schedulers)
+                scheduler.OnSuccessfulIteration(source);
+        }
+
+        public void OnFailedIteration(IScheduler source, Exception error)
+        {
+            foreach (var scheduler in schedulers) 
+                scheduler.OnFailedIteration(source, error);
         }
     }
 }

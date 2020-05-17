@@ -11,5 +11,17 @@ namespace Vostok.Applications.Scheduled
             => scheduler is MultiScheduler multiScheduler 
                 ? multiScheduler.ScheduleNextWithSource(from) 
                 : (scheduler.ScheduleNext(from), scheduler);
+
+        public static void OnSuccessfulIteration(this IScheduler scheduler, IScheduler source)
+        {
+            if (scheduler is IScheduledActionEventListener listener)
+                listener.OnSuccessfulIteration(source);
+        }
+
+        public static void OnFailedIteration(this IScheduler scheduler, IScheduler source, Exception error)
+        {
+            if (scheduler is IScheduledActionEventListener listener)
+                listener.OnFailedIteration(source, error);
+        }
     }
 }

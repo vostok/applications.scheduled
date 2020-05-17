@@ -130,9 +130,13 @@ namespace Vostok.Applications.Scheduled
 
                     if (watch.Elapsed > timeBudget.Total)
                         log.Warn("Execution did not fit into the time budget before the next planned execution.");
+
+                    action.Scheduler.OnSuccessfulIteration(scheduler);
                 }
                 catch (Exception error)
                 {
+                    action.Scheduler.OnFailedIteration(scheduler, error);
+
                     if (action.Options.CrashOnPayloadException || error is OperationCanceledException)
                         throw;
 

@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Vostok.Applications.Scheduled\Vostok.Applications.Scheduled.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\vostok.commons.testing\Vostok.Commons.Testing\AssertionAssertions.cs" Link="Commons\AssertionAssertions.cs" />
+  </ItemGroup>
+
 </Project>
