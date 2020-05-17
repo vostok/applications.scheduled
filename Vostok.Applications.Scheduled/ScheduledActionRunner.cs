@@ -34,11 +34,11 @@ namespace Vostok.Applications.Scheduled
                     {
                         using (new OperationContextToken($"{++iteration}"))
                         {
-                            await WaitForNextExecutionAsync(lastExecutionTime, token);
+                            var scheduler = await WaitForNextExecutionAsync(lastExecutionTime, token);
 
                             lastExecutionTime = PreciseDateTime.Now;
 
-                            await ExecutePayloadAsync(lastExecutionTime, token);
+                            await ExecutePayloadAsync(lastExecutionTime, scheduler, token);
                         }
                     }
                 }
@@ -50,16 +50,22 @@ namespace Vostok.Applications.Scheduled
             }
         }
 
-        private async Task WaitForNextExecutionAsync(DateTimeOffset lastExecutionTime, CancellationToken token)
+        private async Task<IScheduler> WaitForNextExecutionAsync(DateTimeOffset lastExecutionTime, CancellationToken token)
         {
             var nextExecutionTime = null as DateTimeOffset?;
+            var nextExecutionScheduler = null as IScheduler;
             var firstActualizationDone = false;
 
             while (!token.IsCancellationRequested)
             {
-                var newNextExecutionTime = GetNextExecutionTime(lastExecutionTime);
+                var (newNextExecutionTime, newNextExeuctionScheduler) = GetNextExecutionTime(lastExecutionTime);
+
                 if (newNextExecutionTime != nextExecutionTime || !firstActualizationDone)
-                    LogNextExecutionTime(nextExecutionTime = newNextExecutionTime);
+                {
+                    nextExecutionTime = newNextExecutionTime;
+                    nextExecutionScheduler = newNextExeuctionScheduler;
+                    LogNextExecutionTime(nextExecutionTime);
+                }
 
                 firstActualizationDone = true;
 
@@ -70,7 +76,7 @@ namespace Vostok.Applications.Scheduled
                 }
 
                 if (nextExecutionTime <= lastExecutionTime)
-                    return;
+                    return nextExecutionScheduler;
 
                 var timeToWait = TimeSpanArithmetics.Max(TimeSpan.Zero, nextExecutionTime.Value - PreciseDateTime.Now);
                 if (timeToWait > action.Options.ActualizationPeriod)
@@ -85,22 +91,24 @@ namespace Vostok.Applications.Scheduled
                 while (PreciseDateTime.Now < nextExecutionTime)
                     await Task.Delay(1.Milliseconds(), token);
 
-                return;
+                return nextExecutionScheduler;
             }
+
+            return null;
         }
 
-        private async Task ExecutePayloadAsync(DateTimeOffset executionTime, CancellationToken token)
+        private async Task ExecutePayloadAsync(DateTimeOffset executionTime, IScheduler scheduler, CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return;
 
-            var nextExecution = GetNextExecutionTime(executionTime);
+            var nextExecution = GetNextExecutionTime(executionTime).time;
 
             var timeBudget = nextExecution.HasValue
                 ? TimeBudget.StartNew(TimeSpanArithmetics.Max(TimeSpan.Zero, nextExecution.Value - executionTime))
                 : TimeBudget.Infinite;
 
-            var context = new ScheduledActionContext(timeBudget, token);
+            var context = new ScheduledActionContext(timeBudget, scheduler, token);
 
             log.Info("Executing with time budget = {TimeBudget}.", timeBudget.Total.ToPrettyString());
 
@@ -142,11 +150,11 @@ namespace Vostok.Applications.Scheduled
             await payloadTask;
         }
 
-        private DateTimeOffset? GetNextExecutionTime(DateTimeOffset from)
+        private (DateTimeOffset? time, IScheduler scheduler) GetNextExecutionTime(DateTimeOffset from)
         {
             try
             {
-                return action.Scheduler.ScheduleNext(from);
+                return action.Scheduler.ScheduleNextWithSource(from);
             }
             catch (Exception error)
             {
@@ -155,7 +163,7 @@ namespace Vostok.Applications.Scheduled
 
                 log.Error(error, "Scheduler failure. Can't schedule next iteration.");
 
-                return null;
+                return (null, null);
             }
         }
 

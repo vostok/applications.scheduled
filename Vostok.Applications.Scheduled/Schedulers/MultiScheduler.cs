@@ -10,19 +10,26 @@ namespace Vostok.Applications.Scheduled.Schedulers
         public MultiScheduler(IReadOnlyList<IScheduler> schedulers)
             => this.schedulers = schedulers ?? throw new ArgumentNullException(nameof(schedulers));
 
-        public DateTimeOffset? ScheduleNext(DateTimeOffset from)
+        public DateTimeOffset? ScheduleNext(DateTimeOffset from) 
+            => ScheduleNextWithSource(from).timestamp;
+
+        public (DateTimeOffset? timestamp, IScheduler source) ScheduleNextWithSource(DateTimeOffset from)
         {
             var nearest = null as DateTimeOffset?;
+            var nearestScheduler = null as IScheduler;
 
             foreach (var scheduler in schedulers)
             {
-                var next = scheduler.ScheduleNext(from);
+                var (next, nextScheduler) = scheduler.ScheduleNextWithSource(from);
 
                 if (nearest == null || next < nearest)
+                {
                     nearest = next;
+                    nearestScheduler = nextScheduler;
+                }
             }
 
-            return nearest;
+            return (nearest, nearestScheduler);
         }
     }
 }
