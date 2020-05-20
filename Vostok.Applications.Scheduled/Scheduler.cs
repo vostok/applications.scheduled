@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Applications.Scheduled.Schedulers;
 
@@ -48,6 +49,13 @@ namespace Vostok.Applications.Scheduled
         {
             var scheduler = new OnDemandScheduler();
             demand = scheduler.Demand;
+            return scheduler;
+        }
+
+        public static IScheduler OnDemandWithFeedback(out Func<Task> demand)
+        {
+            var scheduler = new OnDemandScheduler();
+            demand = scheduler.DemandWithFeedback;
             return scheduler;
         }
 
