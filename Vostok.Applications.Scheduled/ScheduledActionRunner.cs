@@ -108,7 +108,7 @@ namespace Vostok.Applications.Scheduled
                 ? TimeBudget.StartNew(TimeSpanArithmetics.Max(TimeSpan.Zero, nextExecution.Value - executionTime))
                 : TimeBudget.Infinite;
 
-            var context = new ScheduledActionContext(timeBudget, scheduler, token);
+            var context = new ScheduledActionContext(executionTime, timeBudget, scheduler, token);
 
             log.Info("Executing with time budget = {TimeBudget}.", timeBudget.Total.ToPrettyString());
 
