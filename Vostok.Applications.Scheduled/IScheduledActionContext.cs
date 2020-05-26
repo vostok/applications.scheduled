@@ -18,6 +18,11 @@ namespace Vostok.Applications.Scheduled
         /// </summary>
         TimeSpan RemainingTime { get; }
 
+        /// <summary>
+        /// Returns the time when execution begins.
+        /// </summary>
+        DateTimeOffset Timestamp { get; }
+
         CancellationToken CancellationToken { get; }
     }
 }

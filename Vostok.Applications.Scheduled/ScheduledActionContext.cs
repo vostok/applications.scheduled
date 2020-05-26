@@ -8,12 +8,19 @@ namespace Vostok.Applications.Scheduled
     {
         private readonly TimeBudget budget;
 
-        public ScheduledActionContext(TimeBudget budget, IScheduler scheduler, CancellationToken cancellationToken)
+        public ScheduledActionContext(
+            DateTimeOffset timestamp,
+            TimeBudget budget,
+            IScheduler scheduler,
+            CancellationToken cancellationToken)
         {
+            Timestamp = timestamp;
             this.budget = budget;
             Scheduler = scheduler;
             CancellationToken = cancellationToken;
         }
+
+        public DateTimeOffset Timestamp { get; }
 
         public TimeSpan RemainingTime => budget.Remaining;
 
