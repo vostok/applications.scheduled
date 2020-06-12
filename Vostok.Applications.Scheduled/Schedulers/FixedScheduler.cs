@@ -25,5 +25,7 @@ namespace Vostok.Applications.Scheduled.Schedulers
 
             return nearest;
         }
+
+        public override string ToString() => "Fixed";
     }
 }

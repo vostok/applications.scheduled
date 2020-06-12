@@ -20,8 +20,12 @@ namespace Vostok.Applications.Scheduled
             actions = new List<ScheduledAction>();
         }
 
+        public bool DiagnosticInfoEnabled { get; private set; } = true;
+        
+        public bool DiagnosticChecksEnabled { get; private set; } = true;
+
         public IScheduledActionsRunner BuildRunner()
-            => new ScheduledActionsRunner(actions.Select(action => new ScheduledActionRunner(action, log)).ToArray(), log);
+            => BuildRunnerInternal();
 
         public IScheduledActionsBuilder Schedule(string name, IScheduler scheduler, Action<IScheduledActionContext> payload)
             => Schedule(name, scheduler, payload, new ScheduledActionOptions());
@@ -40,6 +44,21 @@ namespace Vostok.Applications.Scheduled
 
             return this;
         }
+
+        public IScheduledActionsBuilder DisableDiagnosticInfo()
+        {
+            DiagnosticInfoEnabled = false;
+            return this;
+        }
+
+        public IScheduledActionsBuilder DisableDiagnosticChecks()
+        {
+            DiagnosticChecksEnabled = false;
+            return this;
+        }
+
+        internal ScheduledActionsRunner BuildRunnerInternal()
+            => new ScheduledActionsRunner(actions.Select(action => new ScheduledActionRunner(action, log)).ToArray(), log);
 
         private static Func<IScheduledActionContext, Task> WrapAction(Action<IScheduledActionContext> action)
         {

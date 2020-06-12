@@ -60,5 +60,7 @@ namespace Vostok.Applications.Scheduled.Schedulers
                 signals.Clear();
             }
         }
+
+        public override string ToString() => "OnDemand";
     }
 }
