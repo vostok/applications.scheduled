@@ -36,13 +36,20 @@ namespace Vostok.Applications.Scheduled
             => runner.RunAsync(environment.ShutdownToken);
 
         public void Dispose()
-            => disposables.ForEach(disposable => disposable.Dispose());
+        {
+            disposables.ForEach(disposable => disposable.Dispose());
+            DoDispose();
+        }
 
         public virtual Task WarmupBeforeSetupAsync([NotNull] IVostokHostingEnvironment environment) 
             => Task.CompletedTask;
 
         public virtual Task WarmupAfterSetupAsync([NotNull] IVostokHostingEnvironment environment)
             => Task.CompletedTask;
+
+        public virtual void DoDispose()
+        {
+        }
 
         private void RegisterDiagnosticFeatures(ScheduledActionsBuilder builder, IVostokHostingEnvironment environment)
         {
