@@ -20,10 +20,6 @@ namespace Vostok.Applications.Scheduled
             actions = new List<ScheduledAction>();
         }
 
-        public bool DiagnosticInfoEnabled { get; private set; } = true;
-        
-        public bool DiagnosticChecksEnabled { get; private set; } = true;
-
         public IScheduledActionsRunner BuildRunner()
             => BuildRunnerInternal();
 
@@ -42,18 +38,6 @@ namespace Vostok.Applications.Scheduled
 
             log.Info("Scheduled '{ActionName}' action with scheduler '{Scheduler}'. ", name, scheduler.GetType().Name);
 
-            return this;
-        }
-
-        public IScheduledActionsBuilder DisableDiagnosticInfo()
-        {
-            DiagnosticInfoEnabled = false;
-            return this;
-        }
-
-        public IScheduledActionsBuilder DisableDiagnosticChecks()
-        {
-            DiagnosticChecksEnabled = false;
             return this;
         }
 

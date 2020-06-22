@@ -28,9 +28,5 @@ namespace Vostok.Applications.Scheduled
             [NotNull] IScheduler scheduler, 
             [NotNull] Func<IScheduledActionContext, Task> payload, 
             [NotNull] ScheduledActionOptions options);
-
-        IScheduledActionsBuilder DisableDiagnosticInfo();
-
-        IScheduledActionsBuilder DisableDiagnosticChecks();
     }
 }

@@ -15,6 +15,10 @@ namespace Vostok.Applications.Scheduled
 
         private volatile ScheduledActionsRunner runner;
 
+        public bool DiagnosticInfoEnabled { get; set; } = true;
+
+        public bool DiagnosticChecksEnabled { get; set; } = true;
+
         public abstract void Setup([NotNull] IScheduledActionsBuilder builder, [NotNull] IVostokHostingEnvironment environment);
 
         public async Task InitializeAsync(IVostokHostingEnvironment environment)
@@ -29,7 +33,7 @@ namespace Vostok.Applications.Scheduled
 
             runner = builder.BuildRunnerInternal();
 
-            RegisterDiagnosticFeatures(builder, environment);
+            RegisterDiagnosticFeatures(environment);
         }
 
         public Task RunAsync(IVostokHostingEnvironment environment)
@@ -41,7 +45,7 @@ namespace Vostok.Applications.Scheduled
             DoDispose();
         }
 
-        public virtual Task WarmupBeforeSetupAsync([NotNull] IVostokHostingEnvironment environment) 
+        public virtual Task WarmupBeforeSetupAsync([NotNull] IVostokHostingEnvironment environment)
             => Task.CompletedTask;
 
         public virtual Task WarmupAfterSetupAsync([NotNull] IVostokHostingEnvironment environment)
@@ -51,7 +55,7 @@ namespace Vostok.Applications.Scheduled
         {
         }
 
-        private void RegisterDiagnosticFeatures(ScheduledActionsBuilder builder, IVostokHostingEnvironment environment)
+        private void RegisterDiagnosticFeatures(IVostokHostingEnvironment environment)
         {
             foreach (var actionRunner in runner.Runners)
             {
@@ -60,10 +64,10 @@ namespace Vostok.Applications.Scheduled
                 var infoProvider = new ScheduledActionsInfoProvider(actionRunner);
                 var healthCheck = new ScheduledActionsHealthCheck(actionRunner);
 
-                if (builder.DiagnosticInfoEnabled)
+                if (DiagnosticInfoEnabled)
                     disposables.Add(environment.Diagnostics.Info.RegisterProvider(infoEntry, infoProvider));
-                
-                if (builder.DiagnosticChecksEnabled)
+
+                if (DiagnosticChecksEnabled)
                     disposables.Add(environment.Diagnostics.HealthTracker.RegisterCheck($"scheduled ({info.Name})", healthCheck));
             }
         }
