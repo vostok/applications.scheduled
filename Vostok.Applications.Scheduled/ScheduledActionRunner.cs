@@ -196,7 +196,7 @@ namespace Vostok.Applications.Scheduled
         private void LogNextExecutionTime(DateTimeOffset? nextExecutionTime)
         {
             if (nextExecutionTime == null)
-                log.Warn("Next execution time: unknown.");
+                log.Info("Next execution time: unknown.");
             else
                 log.Info("Next execution time = {NextExecutionTime:yyyy-MM-dd HH:mm:ss.fff} (~{TimeToNextExecution} from now).", 
                     nextExecutionTime.Value.DateTime, TimeSpanArithmetics.Max(TimeSpan.Zero, nextExecutionTime.Value - PreciseDateTime.Now).ToPrettyString());
