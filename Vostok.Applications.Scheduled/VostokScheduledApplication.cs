@@ -21,19 +21,17 @@ namespace Vostok.Applications.Scheduled
 
         public abstract void Setup([NotNull] IScheduledActionsBuilder builder, [NotNull] IVostokHostingEnvironment environment);
 
-        public async Task InitializeAsync(IVostokHostingEnvironment environment)
+        public Task InitializeAsync(IVostokHostingEnvironment environment)
         {
             var builder = new ScheduledActionsBuilder(environment.Log);
 
-            await WarmupBeforeSetupAsync(environment);
-
             Setup(builder, environment);
-
-            await WarmupAfterSetupAsync(environment);
 
             runner = builder.BuildRunnerInternal();
 
             RegisterDiagnosticFeatures(environment);
+
+            return Task.CompletedTask;
         }
 
         public Task RunAsync(IVostokHostingEnvironment environment)
@@ -44,12 +42,6 @@ namespace Vostok.Applications.Scheduled
             disposables.ForEach(disposable => disposable.Dispose());
             DoDispose();
         }
-
-        public virtual Task WarmupBeforeSetupAsync([NotNull] IVostokHostingEnvironment environment)
-            => Task.CompletedTask;
-
-        public virtual Task WarmupAfterSetupAsync([NotNull] IVostokHostingEnvironment environment)
-            => Task.CompletedTask;
 
         public virtual void DoDispose()
         {
