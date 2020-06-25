@@ -15,10 +15,6 @@ namespace Vostok.Applications.Scheduled
 
         private volatile ScheduledActionsRunner runner;
 
-        public bool DiagnosticInfoEnabled { get; set; } = true;
-
-        public bool DiagnosticChecksEnabled { get; set; } = true;
-
         public abstract void Setup([NotNull] IScheduledActionsBuilder builder, [NotNull] IVostokHostingEnvironment environment);
 
         public Task InitializeAsync(IVostokHostingEnvironment environment)
@@ -56,11 +52,8 @@ namespace Vostok.Applications.Scheduled
                 var infoProvider = new ScheduledActionsInfoProvider(actionRunner);
                 var healthCheck = new ScheduledActionsHealthCheck(actionRunner);
 
-                if (DiagnosticInfoEnabled)
-                    disposables.Add(environment.Diagnostics.Info.RegisterProvider(infoEntry, infoProvider));
-
-                if (DiagnosticChecksEnabled)
-                    disposables.Add(environment.Diagnostics.HealthTracker.RegisterCheck($"scheduled ({info.Name})", healthCheck));
+                disposables.Add(environment.Diagnostics.Info.RegisterProvider(infoEntry, infoProvider));
+                disposables.Add(environment.Diagnostics.HealthTracker.RegisterCheck($"scheduled ({info.Name})", healthCheck));
             }
         }
     }
