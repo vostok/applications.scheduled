@@ -45,6 +45,9 @@ namespace Vostok.Applications.Scheduled
 
         private void RegisterDiagnosticFeatures(IVostokHostingEnvironment environment)
         {
+            if (!environment.HostExtensions.TryGet<IVostokApplicationDiagnostics>(out var diagnostics))
+                return;
+
             foreach (var actionRunner in runner.Runners)
             {
                 var info = actionRunner.GetInfo();
@@ -52,8 +55,8 @@ namespace Vostok.Applications.Scheduled
                 var infoProvider = new ScheduledActionsInfoProvider(actionRunner);
                 var healthCheck = new ScheduledActionsHealthCheck(actionRunner);
 
-                disposables.Add(environment.Diagnostics.Info.RegisterProvider(infoEntry, infoProvider));
-                disposables.Add(environment.Diagnostics.HealthTracker.RegisterCheck($"scheduled ({info.Name})", healthCheck));
+                disposables.Add(diagnostics.Info.RegisterProvider(infoEntry, infoProvider));
+                disposables.Add(diagnostics.HealthTracker.RegisterCheck($"scheduled ({info.Name})", healthCheck));
             }
         }
     }
