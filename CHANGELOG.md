@@ -1,3 +1,10 @@
+## 0.2.0 (27-06-2020):
+
+- Implemented diagnostic info providers
+- Implemented error-based health check
+- Added `AddScheduled` extension for `ICompositeApplicationBuilder`
+- Enabled custom Dispose
+
 ## 0.1.2 (26-05-2020):
 
 Added `Timestamp` field to `IScheduledActionContext`.
