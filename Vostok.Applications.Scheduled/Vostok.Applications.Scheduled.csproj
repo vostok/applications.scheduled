@@ -95,7 +95,7 @@
       <MergeAssemblies Include="$(BinPath)NCrontab.dll" />
     </ItemGroup>
     <Exec WorkingDirectory="$(BinPath)" Command="$(ILRepackExecutable) /internalize /renameInternalized /out:$(ResultAssembly) $(ResultAssembly) @(MergeAssemblies->'%(RelativeDir)%(FileName)%(Extension)', ' ')" />
-    <Delete Files="@(MergeAssemblies)"/>
+    <Delete Files="@(MergeAssemblies)" />
   </Target>
 
 </Project>

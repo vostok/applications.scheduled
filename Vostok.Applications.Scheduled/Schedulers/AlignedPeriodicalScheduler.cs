@@ -21,5 +21,7 @@ namespace Vostok.Applications.Scheduled.Schedulers
 
             return from + delayToNext;
         }
+
+        public override string ToString() => $"AlignedPeriodical({periodProvider()})";
     }
 }

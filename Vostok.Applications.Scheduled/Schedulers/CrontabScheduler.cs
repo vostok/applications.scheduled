@@ -6,8 +6,8 @@ namespace Vostok.Applications.Scheduled.Schedulers
 {
     internal class CrontabScheduler : IScheduler
     {
-        private readonly CrontabSchedule.ParseOptions OptionsWithSeconds = new CrontabSchedule.ParseOptions { IncludingSeconds = true };
-        private readonly CrontabSchedule.ParseOptions OptionsWithoutSeconds = new CrontabSchedule.ParseOptions { IncludingSeconds = false };
+        private readonly CrontabSchedule.ParseOptions OptionsWithSeconds = new CrontabSchedule.ParseOptions {IncludingSeconds = true};
+        private readonly CrontabSchedule.ParseOptions OptionsWithoutSeconds = new CrontabSchedule.ParseOptions {IncludingSeconds = false};
 
         private readonly Func<string> scheduleProvider;
 
@@ -23,6 +23,8 @@ namespace Vostok.Applications.Scheduled.Schedulers
 
             return nextOccurence;
         }
+
+        public override string ToString() => $"Crontab({scheduleProvider()})";
 
         private CrontabSchedule ParseSchedule(string value)
         {

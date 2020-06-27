@@ -43,5 +43,7 @@ namespace Vostok.Applications.Scheduled.Schedulers
             foreach (var scheduler in schedulers) 
                 scheduler.OnFailedIteration(source, error);
         }
+
+        public override string ToString() => $"Multi({string.Join(", ", schedulers)})";
     }
 }

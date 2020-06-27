@@ -21,7 +21,7 @@ namespace Vostok.Applications.Scheduled
         }
 
         public IScheduledActionsRunner BuildRunner()
-            => new ScheduledActionsRunner(actions.Select(action => new ScheduledActionRunner(action, log)).ToArray(), log);
+            => BuildRunnerInternal();
 
         public IScheduledActionsBuilder Schedule(string name, IScheduler scheduler, Action<IScheduledActionContext> payload)
             => Schedule(name, scheduler, payload, new ScheduledActionOptions());
@@ -40,6 +40,9 @@ namespace Vostok.Applications.Scheduled
 
             return this;
         }
+
+        internal ScheduledActionsRunner BuildRunnerInternal()
+            => new ScheduledActionsRunner(actions.Select(action => new ScheduledActionRunner(action, log)).ToArray(), log);
 
         private static Func<IScheduledActionContext, Task> WrapAction(Action<IScheduledActionContext> action)
         {

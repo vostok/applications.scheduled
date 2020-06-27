@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Vostok.Applications.Scheduled.Diagnostics;
 using Vostok.Commons.Time;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Context;
@@ -12,6 +13,7 @@ namespace Vostok.Applications.Scheduled
 {
     internal class ScheduledActionRunner
     {
+        private readonly ScheduledActionMonitor monitor = new ScheduledActionMonitor();
         private readonly ScheduledAction action;
         private readonly ILog log;
 
@@ -20,6 +22,13 @@ namespace Vostok.Applications.Scheduled
             this.action = action;
             this.log = log;
         }
+
+        public ScheduledActionInfo GetInfo()
+            => new ScheduledActionInfo(
+                action.Name, 
+                action.Scheduler.ToString(), 
+                action.Options, 
+                monitor.BuildStatistics());
 
         public async Task RunAsync(CancellationToken token)
         {
@@ -58,13 +67,14 @@ namespace Vostok.Applications.Scheduled
 
             while (!token.IsCancellationRequested)
             {
-                var (newNextExecutionTime, newNextExeuctionScheduler) = GetNextExecutionTime(lastExecutionTime);
+                var (newNextExecutionTime, newNextExecutionScheduler) = GetNextExecutionTime(lastExecutionTime);
 
                 if (newNextExecutionTime != nextExecutionTime || !firstActualizationDone)
                 {
                     nextExecutionTime = newNextExecutionTime;
-                    nextExecutionScheduler = newNextExeuctionScheduler;
+                    nextExecutionScheduler = newNextExecutionScheduler;
                     LogNextExecutionTime(nextExecutionTime);
+                    monitor.OnNextExecution(nextExecutionTime);
                 }
 
                 firstActualizationDone = true;
@@ -114,6 +124,8 @@ namespace Vostok.Applications.Scheduled
 
             async Task ExecutePayload()
             {
+                monitor.OnIterationStarted();
+
                 try
                 {
                     var watch = Stopwatch.StartNew();
@@ -122,25 +134,35 @@ namespace Vostok.Applications.Scheduled
 
                     watch.Stop();
 
-                    log.Info("Executed in {ExecutionTime}.", new
-                    {
-                        ExecutionTime = watch.Elapsed.ToPrettyString(),
-                        ExecutionTimeMs = watch.Elapsed.TotalMilliseconds
-                    });
+                    log.Info(
+                        "Executed in {ExecutionTime}.",
+                        new
+                        {
+                            ExecutionTime = watch.Elapsed.ToPrettyString(),
+                            ExecutionTimeMs = watch.Elapsed.TotalMilliseconds
+                        });
 
                     if (watch.Elapsed > timeBudget.Total)
                         log.Warn("Execution did not fit into the time budget before the next planned execution.");
 
                     action.Scheduler.OnSuccessfulIteration(scheduler);
+
+                    monitor.OnIterationSucceeded();
                 }
                 catch (Exception error)
                 {
                     action.Scheduler.OnFailedIteration(scheduler, error);
 
+                    monitor.OnIterationFailed(error);
+
                     if (action.Options.CrashOnPayloadException || error is OperationCanceledException)
                         throw;
 
                     log.Error(error, "Scheduled action threw an exception.");
+                }
+                finally
+                {
+                    monitor.OnIterationCompleted();
                 }
             }
 
@@ -174,7 +196,7 @@ namespace Vostok.Applications.Scheduled
         private void LogNextExecutionTime(DateTimeOffset? nextExecutionTime)
         {
             if (nextExecutionTime == null)
-                log.Warn("Next execution time: unknown.");
+                log.Info("Next execution time: unknown.");
             else
                 log.Info("Next execution time = {NextExecutionTime:yyyy-MM-dd HH:mm:ss.fff} (~{TimeToNextExecution} from now).", 
                     nextExecutionTime.Value.DateTime, TimeSpanArithmetics.Max(TimeSpan.Zero, nextExecutionTime.Value - PreciseDateTime.Now).ToPrettyString());
