@@ -7,7 +7,7 @@ notests *default:
 
   install:
     - Vostok.Applications.Scheduled/bin/Release/netstandard2.0/Vostok.Applications.Scheduled.dll
-    - module vostok.hosting.abstractions@multi_plus_diagnostics
+    - module vostok.hosting.abstractions
 
   deps:
     - vostok.clusterconfig.client.abstractions
@@ -19,7 +19,7 @@ notests *default:
     - vostok.datacenters
     - vostok.devtools
     - vostok.hercules.client.abstractions
-    - vostok.hosting.abstractions@multi_plus_diagnostics
+    - vostok.hosting.abstractions
     - vostok.logging.abstractions
     - vostok.logging.context
     - vostok.metrics
