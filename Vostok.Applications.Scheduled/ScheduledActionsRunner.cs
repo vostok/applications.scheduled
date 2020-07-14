@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Vostok.Applications.Scheduled.Diagnostics;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Logging.Abstractions;
 

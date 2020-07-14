@@ -1,3 +1,7 @@
+## 0.2.1 (14-07-2020):
+
+Added new scheduler: PeriodicalWithConstantPause.
+
 ## 0.2.0 (27-06-2020):
 
 - Implemented diagnostic info providers
