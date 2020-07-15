@@ -21,11 +21,17 @@ namespace Vostok.Applications.Scheduled
         public static IScheduler Periodical(TimeSpan period, bool delayFirstIteration = true)
             => new PeriodicalScheduler(() => period, () => 0d, delayFirstIteration);
 
+        public static IScheduler PeriodicalWithConstantPause([NotNull] Func<TimeSpan> periodProvider, bool delayFirstIteration)
+            => new PeriodicalWithConstantPauseScheduler(periodProvider, delayFirstIteration);
+
+        public static IScheduler PeriodicalWithConstantPause(TimeSpan period, bool delayFirstIteration)
+            => new PeriodicalWithConstantPauseScheduler(() => period, delayFirstIteration);
+
         public static IScheduler PeriodicalWithConstantPause([NotNull] Func<TimeSpan> periodProvider)
-            => new PeriodicalWithConstantPauseScheduler(periodProvider);
+            => new PeriodicalWithConstantPauseScheduler(periodProvider, true);
 
         public static IScheduler PeriodicalWithConstantPause(TimeSpan period)
-            => new PeriodicalWithConstantPauseScheduler(() => period);
+            => new PeriodicalWithConstantPauseScheduler(() => period, true);
 
         public static IScheduler AlignedPeriodical([NotNull] Func<TimeSpan> periodProvider)
             => new AlignedPeriodicalScheduler(periodProvider);

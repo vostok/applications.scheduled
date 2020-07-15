@@ -26,7 +26,7 @@ namespace Vostok.Applications.Scheduled.Schedulers
 
         public DateTimeOffset? ScheduleNext(DateTimeOffset from)
         {
-            if (scheduledFirst.TrySetTrue() && !delayFirstIteration)
+            if (!delayFirstIteration && scheduledFirst.TrySetTrue())
                 return from;
 
             var period = periodProvider();
