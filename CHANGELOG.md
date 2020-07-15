@@ -1,3 +1,8 @@
+## 0.2.2 (15-07-2020):
+
+- ScheduledActionRunner: do no log time budget violations when using PeriodicalWithConstantPauseScheduler.
+- PeriodicalWithConstantPauseScheduler: added delayFirstIteration parameter.
+
 ## 0.2.1 (14-07-2020):
 
 Added new scheduler: PeriodicalWithConstantPause.
