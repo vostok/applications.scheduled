@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Vostok.Applications.Scheduled.Diagnostics;
+using Vostok.Applications.Scheduled.Schedulers;
 using Vostok.Commons.Time;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Context;
@@ -142,7 +143,7 @@ namespace Vostok.Applications.Scheduled
                             ExecutionTimeMs = watch.Elapsed.TotalMilliseconds
                         });
 
-                    if (watch.Elapsed > timeBudget.Total)
+                    if (watch.Elapsed > timeBudget.Total && !(scheduler is PeriodicalWithConstantPauseScheduler))
                         log.Warn("Execution did not fit into the time budget before the next planned execution.");
 
                     action.Scheduler.OnSuccessfulIteration(scheduler);
