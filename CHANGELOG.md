@@ -1,3 +1,7 @@
+## 0.2.3 (20-07-2020):
+
+Fixed https://github.com/vostok/applications.scheduled/issues/6
+
 ## 0.2.2 (15-07-2020):
 
 - ScheduledActionRunner: do no log time budget violations when using PeriodicalWithConstantPauseScheduler.

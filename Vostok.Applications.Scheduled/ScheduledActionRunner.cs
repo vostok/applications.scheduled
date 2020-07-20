@@ -121,7 +121,10 @@ namespace Vostok.Applications.Scheduled
 
             var context = new ScheduledActionContext(executionTime, timeBudget, scheduler, token);
 
-            log.Info("Executing with time budget = {TimeBudget}.", timeBudget.Total.ToPrettyString());
+            if (!(scheduler is PeriodicalWithConstantPauseScheduler))
+                log.Info("Executing with time budget = {TimeBudget}.", timeBudget.Total.ToPrettyString());
+            else
+                log.Info("Executing..");
 
             async Task ExecutePayload()
             {
