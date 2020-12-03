@@ -1,3 +1,7 @@
+## 0.2.4 (03-12-2020):
+
+- Added `DoDisposeAsync` virtual method.
+
 ## 0.2.3 (20-07-2020):
 
 Fixed https://github.com/vostok/applications.scheduled/issues/6
