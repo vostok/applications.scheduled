@@ -36,11 +36,17 @@ namespace Vostok.Applications.Scheduled
         public void Dispose()
         {
             disposables.ForEach(disposable => disposable.Dispose());
+            DoDisposeAsync().GetAwaiter().GetResult();
             DoDispose();
         }
 
         public virtual void DoDispose()
         {
+        }
+
+        public virtual Task DoDisposeAsync()
+        {
+            return Task.CompletedTask;
         }
 
         private void RegisterDiagnosticFeatures(IVostokHostingEnvironment environment)
