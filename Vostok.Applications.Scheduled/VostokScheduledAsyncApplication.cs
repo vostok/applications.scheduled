@@ -21,7 +21,7 @@ namespace Vostok.Applications.Scheduled
         {
             var builder = new ScheduledActionsBuilder(environment.Log);
 
-            await SetupAsync(builder, environment);
+            await SetupAsync(builder, environment).ConfigureAwait(false);
 
             runner = builder.BuildRunnerInternal();
 
