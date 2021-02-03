@@ -77,6 +77,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.tracing.abstractions\Vostok.Tracing.Abstractions\bin\Release\netstandard2.0\Vostok.Tracing.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Tracing.Extensions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.tracing.extensions\Vostok.Tracing.Extensions\bin\Release\netstandard2.0\Vostok.Tracing.Extensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ncrontab" Version="3.3.1" PrivateAssets="all" />
@@ -90,7 +94,7 @@
     <ItemGroup>
       <MergeAssemblies Include="$(BinPath)NCrontab.dll" />
     </ItemGroup>
-    <Exec WorkingDirectory="$(BinPath)" Command="$(ILRepackExecutable) /internalize /renameInternalized /out:$(ResultAssembly) $(ResultAssembly) @(MergeAssemblies->'%(RelativeDir)%(FileName)%(Extension)', ' ')" />
+    <Exec WorkingDirectory="$(BinPath)" Command="$(ILRepackExecutable) /internalize /renameInternalized /out:$(ResultAssembly) $(ResultAssembly) @(MergeAssemblies-&gt;'%(RelativeDir)%(FileName)%(Extension)', ' ')" />
     <Delete Files="@(MergeAssemblies)" />
   </Target>
 </Project>
