@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Logging.Abstractions;
+using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Applications.Scheduled
 {
@@ -11,11 +12,18 @@ namespace Vostok.Applications.Scheduled
     public class ScheduledActionsBuilder : IScheduledActionsBuilder
     {
         private readonly ILog log;
+        private readonly ITracer tracer;
         private readonly List<ScheduledAction> actions;
 
         public ScheduledActionsBuilder(ILog log)
+            : this(log, TracerProvider.Get())
+        {
+        }
+
+        public ScheduledActionsBuilder(ILog log, ITracer tracer)
         {
             this.log = log.ForContext("Scheduler");
+            this.tracer = tracer;
 
             actions = new List<ScheduledAction>();
         }
@@ -42,7 +50,7 @@ namespace Vostok.Applications.Scheduled
         }
 
         internal ScheduledActionsRunner BuildRunnerInternal()
-            => new ScheduledActionsRunner(actions.Select(action => new ScheduledActionRunner(action, log)).ToArray(), log);
+            => new ScheduledActionsRunner(actions.Select(action => new ScheduledActionRunner(action, log, tracer)).ToArray(), log);
 
         private static Func<IScheduledActionContext, Task> WrapAction(Action<IScheduledActionContext> action)
         {
