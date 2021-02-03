@@ -24,7 +24,7 @@ namespace Vostok.Applications.Scheduled
 
         public void Dispose()
         {
-            disposables.ForEach(disposable => disposable.Dispose());
+            disposables?.ForEach(disposable => disposable.Dispose());
             DoDisposeAsync().GetAwaiter().GetResult();
         }
 
