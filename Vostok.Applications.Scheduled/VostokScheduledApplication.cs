@@ -19,7 +19,7 @@ namespace Vostok.Applications.Scheduled
 
         public Task InitializeAsync(IVostokHostingEnvironment environment)
         {
-            var builder = new ScheduledActionsBuilder(environment.Log);
+            var builder = new ScheduledActionsBuilder(environment.Log, environment.Tracer);
 
             Setup(builder, environment);
 
