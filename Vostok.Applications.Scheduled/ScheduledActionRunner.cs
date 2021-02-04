@@ -7,6 +7,8 @@ using Vostok.Applications.Scheduled.Schedulers;
 using Vostok.Commons.Time;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Context;
+using Vostok.Tracing.Abstractions;
+using Vostok.Tracing.Extensions.Custom;
 
 // ReSharper disable MethodSupportsCancellation
 
@@ -17,11 +19,13 @@ namespace Vostok.Applications.Scheduled
         private readonly ScheduledActionMonitor monitor = new ScheduledActionMonitor();
         private readonly ScheduledAction action;
         private readonly ILog log;
+        private readonly ITracer tracer;
 
-        public ScheduledActionRunner(ScheduledAction action, ILog log)
+        public ScheduledActionRunner(ScheduledAction action, ILog log, ITracer tracer)
         {
             this.action = action;
             this.log = log;
+            this.tracer = tracer;
         }
 
         public ScheduledActionInfo GetInfo()
@@ -129,6 +133,7 @@ namespace Vostok.Applications.Scheduled
             async Task ExecutePayload()
             {
                 monitor.OnIterationStarted();
+                var span = tracer.BeginCustomOperationSpan(action.Name);
 
                 try
                 {
@@ -151,12 +156,14 @@ namespace Vostok.Applications.Scheduled
 
                     action.Scheduler.OnSuccessfulIteration(scheduler);
 
+                    span.SetOperationStatus(null, WellKnownStatuses.Success);
                     monitor.OnIterationSucceeded();
                 }
                 catch (Exception error)
                 {
                     action.Scheduler.OnFailedIteration(scheduler, error);
 
+                    span.SetOperationStatus(null, WellKnownStatuses.Error);
                     monitor.OnIterationFailed(error);
 
                     if (action.Options.CrashOnPayloadException || error is OperationCanceledException)
@@ -166,6 +173,7 @@ namespace Vostok.Applications.Scheduled
                 }
                 finally
                 {
+                    span.Dispose();
                     monitor.OnIterationCompleted();
                 }
             }
