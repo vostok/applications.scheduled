@@ -1,3 +1,7 @@
+## 0.2.5 (04-02-2020):
+
+Trace with custom operations spans.
+
 ## 0.2.4 (03-12-2020):
 
 - Added `DoDisposeAsync` virtual method.
