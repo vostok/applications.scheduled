@@ -23,7 +23,7 @@ namespace Vostok.Applications.Scheduled
                         Setup(builder, env);
                         return Task.CompletedTask;
                     })
-               .ConfigureAwait(false);
+                .ConfigureAwait(false);
         }
 
         public Task RunAsync(IVostokHostingEnvironment environment)

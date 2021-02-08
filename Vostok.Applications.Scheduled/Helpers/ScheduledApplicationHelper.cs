@@ -13,7 +13,7 @@ namespace Vostok.Applications.Scheduled.Helpers
             IVostokHostingEnvironment environment,
             Func<IScheduledActionsBuilder, IVostokHostingEnvironment, Task> setupRunner)
         {
-            var builder = new ScheduledActionsBuilder(environment.Log);
+            var builder = new ScheduledActionsBuilder(environment.Log, environment.Tracer);
 
             await setupRunner(builder, environment).ConfigureAwait(false);
 
