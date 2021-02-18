@@ -18,12 +18,8 @@ namespace Vostok.Applications.Scheduled
         {
             (runner, disposables) = await ScheduledApplicationHelper.InitializeAsync(
                     environment,
-                    (builder, env) =>
-                    {
-                        Setup(builder, env);
-                        return Task.CompletedTask;
-                    })
-                .ConfigureAwait(false);
+                    (builder, env) => Setup(builder, env))
+               .ConfigureAwait(false);
         }
 
         public Task RunAsync(IVostokHostingEnvironment environment)
