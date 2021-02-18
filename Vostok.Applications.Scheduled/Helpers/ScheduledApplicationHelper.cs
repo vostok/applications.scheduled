@@ -11,6 +11,20 @@ namespace Vostok.Applications.Scheduled.Helpers
     {
         public static async Task<(ScheduledActionsRunner, List<IDisposable>)> InitializeAsync(
             IVostokHostingEnvironment environment,
+            Action<IScheduledActionsBuilder, IVostokHostingEnvironment> setupRunner)
+        {
+            return await InitializeAsync(
+                    environment,
+                    (builder, env) =>
+                    {
+                        setupRunner(builder, env);
+                        return Task.CompletedTask;
+                    })
+               .ConfigureAwait(false);
+        }
+        
+        public static async Task<(ScheduledActionsRunner, List<IDisposable>)> InitializeAsync(
+            IVostokHostingEnvironment environment,
             Func<IScheduledActionsBuilder, IVostokHostingEnvironment, Task> setupRunner)
         {
             var builder = new ScheduledActionsBuilder(environment.Log, environment.Tracer);
