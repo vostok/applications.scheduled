@@ -9,7 +9,7 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <PropertyGroup>
-    <VersionPrefix>0.2.6</VersionPrefix>
+    <VersionPrefix>0.2.7</VersionPrefix>
   </PropertyGroup>
   <PropertyGroup>
     <Title>Vostok.Applications.Scheduled</Title>
