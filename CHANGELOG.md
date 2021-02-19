@@ -1,4 +1,8 @@
-## 0.2.5 (04-02-2020):
+## 0.2.6 (19-02-2021):
+
+Added `VostokScheduledAsyncApplication` to support async initialization methods.
+
+## 0.2.5 (04-02-2021):
 
 Trace with custom operations spans.
 
