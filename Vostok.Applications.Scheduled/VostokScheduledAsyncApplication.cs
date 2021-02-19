@@ -8,7 +8,7 @@ using Vostok.Hosting.Abstractions;
 namespace Vostok.Applications.Scheduled
 {
     [PublicAPI]
-    public abstract class VostokScheduledApplication : IVostokApplication, IDisposable
+    public abstract class VostokScheduledAsyncApplication : IVostokApplication, IDisposable
     {
         private List<IDisposable> disposables;
 
@@ -16,10 +16,7 @@ namespace Vostok.Applications.Scheduled
 
         public async Task InitializeAsync(IVostokHostingEnvironment environment)
         {
-            (runner, disposables) = await ScheduledApplicationHelper.InitializeAsync(
-                    environment,
-                    (builder, env) => Setup(builder, env))
-               .ConfigureAwait(false);
+            (runner, disposables) = await ScheduledApplicationHelper.InitializeAsync(environment, SetupAsync).ConfigureAwait(false);
         }
 
         public Task RunAsync(IVostokHostingEnvironment environment)
@@ -29,16 +26,11 @@ namespace Vostok.Applications.Scheduled
         {
             disposables?.ForEach(disposable => disposable.Dispose());
             DoDisposeAsync().GetAwaiter().GetResult();
-            DoDispose();
         }
 
-        public abstract void Setup([NotNull] IScheduledActionsBuilder builder, [NotNull] IVostokHostingEnvironment environment);
+        protected abstract Task SetupAsync([NotNull] IScheduledActionsBuilder builder, [NotNull] IVostokHostingEnvironment environment);
 
-        public virtual void DoDispose()
-        {
-        }
-
-        public virtual Task DoDisposeAsync()
+        protected virtual Task DoDisposeAsync()
         {
             return Task.CompletedTask;
         }
