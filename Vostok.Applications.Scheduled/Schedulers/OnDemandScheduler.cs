@@ -67,6 +67,8 @@ namespace Vostok.Applications.Scheduled.Schedulers
 
     internal class OnDemandSchedulerWithArgument<TArg> : OnDemandScheduler
     {
+        public TArg arg;
+        
         public void Demand(TArg argument)
         {
             base.Demand();
