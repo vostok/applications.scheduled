@@ -139,6 +139,7 @@ namespace Vostok.Applications.Scheduled
                 {
                     var watch = Stopwatch.StartNew();
 
+                    // TODO: Pass generic parameter somehow
                     await action.Payload(context);
 
                     watch.Stop();
