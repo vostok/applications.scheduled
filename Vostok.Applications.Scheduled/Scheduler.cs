@@ -56,7 +56,7 @@ namespace Vostok.Applications.Scheduled
 
         public static IScheduler Fixed(DateTimeOffset date)
             => new FixedScheduler(() => new [] {date});
-        
+
         public static IScheduler OnDemand(out Action demand)
         {
             var scheduler = new OnDemandScheduler();

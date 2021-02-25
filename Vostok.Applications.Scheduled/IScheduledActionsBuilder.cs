@@ -31,7 +31,7 @@ namespace Vostok.Applications.Scheduled
         
         IScheduledActionsBuilder Schedule<TArg>(
             [NotNull] string name, 
-            [NotNull] IScheduler scheduler, 
+            [NotNull] IScheduler<TArg> scheduler, 
             [NotNull] Func<TArg, IScheduledActionContext, Task> payload, 
             [NotNull] ScheduledActionOptions options);
     }
