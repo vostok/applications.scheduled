@@ -12,6 +12,6 @@ namespace Vostok.Applications.Scheduled
     [PublicAPI]
     public interface IScheduler<TArg> : IScheduler
     {
-        
+        TArg GetLastArgumentValue();
     }
 }

@@ -68,7 +68,7 @@ namespace Vostok.Applications.Scheduled
         private static TArg ExtractArgumentFromOnDemandScheduler<TArg>(IScheduler scheduler)
         {
             if (scheduler is OnDemandSchedulerWithArgument<TArg> onDemandScheduler)
-                return onDemandScheduler.GetLastArgument();
+                return onDemandScheduler.GetLastArgumentValue();
 
             throw new NotSupportedException("Argument passing is supported for OnDemandScheduler only.");
         }
