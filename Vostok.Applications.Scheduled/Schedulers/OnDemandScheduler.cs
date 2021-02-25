@@ -86,6 +86,6 @@ namespace Vostok.Applications.Scheduled.Schedulers
             }
         }
 
-        public TArg GetLastArgument() => lastArgument;
+        public TArg GetLastArgumentValue() => lastArgument;
     }
 }
