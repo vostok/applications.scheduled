@@ -68,9 +68,9 @@ namespace Vostok.Applications.Scheduled
         private static TArg ExtractArgumentFromOnDemandScheduler<TArg>(IScheduler scheduler)
         {
             if (scheduler is OnDemandSchedulerWithArgument<TArg> onDemandScheduler)
-                return onDemandScheduler.arg;
+                return onDemandScheduler.GetLastArgument();
 
-            throw new NotImplementedException("Argument passing is supported for OnDemandScheduler only.");
+            throw new NotSupportedException("Argument passing is supported for OnDemandScheduler only.");
         }
 
         private static Func<IScheduledActionContext, Task> WrapArgumentExtraction<TArg>(Func<TArg, IScheduledActionContext, Task> action, IScheduler scheduler)
