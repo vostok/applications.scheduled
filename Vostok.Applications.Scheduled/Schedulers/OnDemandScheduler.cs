@@ -64,7 +64,7 @@ namespace Vostok.Applications.Scheduled.Schedulers
         public override string ToString() => "OnDemand";
     }
 
-    internal class OnDemandSchedulerWithArgument<TArg> : OnDemandScheduler
+    internal class OnDemandSchedulerWithArgument<TArg> : OnDemandScheduler, IScheduler<TArg>
     {
         private TArg lastArgument;
         

@@ -50,7 +50,7 @@ namespace Vostok.Applications.Scheduled
             return this;
         }
 
-        public IScheduledActionsBuilder Schedule<TArg>(string name, IScheduler scheduler, Func<TArg, IScheduledActionContext, Task> payload, ScheduledActionOptions options) =>
+        public IScheduledActionsBuilder Schedule<TArg>(string name, IScheduler<TArg> scheduler, Func<TArg, IScheduledActionContext, Task> payload, ScheduledActionOptions options) =>
             Schedule(name, scheduler, WrapArgumentExtraction(payload, scheduler), options);
 
         internal ScheduledActionsRunner BuildRunnerInternal()

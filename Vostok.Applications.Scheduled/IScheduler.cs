@@ -8,4 +8,10 @@ namespace Vostok.Applications.Scheduled
     {
         DateTimeOffset? ScheduleNext(DateTimeOffset from);
     }
+
+    [PublicAPI]
+    public interface IScheduler<TArg> : IScheduler
+    {
+        
+    }
 }
