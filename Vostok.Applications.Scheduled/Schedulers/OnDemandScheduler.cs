@@ -11,6 +11,7 @@ namespace Vostok.Applications.Scheduled.Schedulers
         private readonly List<Signal> signals = new List<Signal>();
         private volatile bool activated;
 
+        // TODO: Possible generic parameter
         public void Demand()
         {
             lock (sync)
@@ -62,5 +63,18 @@ namespace Vostok.Applications.Scheduled.Schedulers
         }
 
         public override string ToString() => "OnDemand";
+    }
+
+    internal class OnDemandSchedulerWithArgument<TArg> : OnDemandScheduler
+    {
+        public void Demand(TArg argument)
+        {
+            base.Demand();
+        }
+
+        public Task DemandWithFeedback(TArg argument)
+        {
+            return base.DemandWithFeedback();
+        }
     }
 }

@@ -4,6 +4,7 @@ using Vostok.Commons.Time;
 
 namespace Vostok.Applications.Scheduled
 {
+    // TODO: Add possible generic parameter?
     internal class ScheduledActionContext : IScheduledActionContext
     {
         private readonly TimeBudget budget;

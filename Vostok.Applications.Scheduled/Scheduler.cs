@@ -56,7 +56,7 @@ namespace Vostok.Applications.Scheduled
 
         public static IScheduler Fixed(DateTimeOffset date)
             => new FixedScheduler(() => new [] {date});
-
+        
         public static IScheduler OnDemand(out Action demand)
         {
             var scheduler = new OnDemandScheduler();
@@ -64,9 +64,23 @@ namespace Vostok.Applications.Scheduled
             return scheduler;
         }
 
+        public static IScheduler OnDemand<TArg>(out Action<TArg> demand)
+        {
+            var scheduler = new OnDemandSchedulerWithArgument<TArg>();
+            demand = scheduler.Demand;
+            return scheduler;
+        }
+
         public static IScheduler OnDemandWithFeedback(out Func<Task> demand)
         {
             var scheduler = new OnDemandScheduler();
+            demand = scheduler.DemandWithFeedback;
+            return scheduler;
+        }
+
+        public static IScheduler OnDemandWithFeedback<TArg>(out Func<TArg, Task> demand)
+        {
+            var scheduler = new OnDemandSchedulerWithArgument<TArg>();
             demand = scheduler.DemandWithFeedback;
             return scheduler;
         }
