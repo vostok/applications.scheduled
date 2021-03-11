@@ -65,7 +65,8 @@ namespace Vostok.Applications.Scheduled
             [NotNull] string name,
             [NotNull] IScheduler scheduler,
             [NotNull] Func<TArg, Task> payload,
-            [NotNull] ScheduledActionOptions options) => builder.Schedule(name, scheduler, _ => payload(ExtractArgumentFromOnDemandScheduler<TArg>(scheduler)), options);
+            [NotNull] ScheduledActionOptions options) 
+            => builder.Schedule(name, scheduler, _ => payload(ExtractArgumentFromOnDemandScheduler<TArg>(scheduler)), options);
 
         public static IScheduledActionsBuilder Schedule<TArg>(
             [NotNull] this IScheduledActionsBuilder builder,
@@ -94,7 +95,8 @@ namespace Vostok.Applications.Scheduled
             [NotNull] string name,
             [NotNull] IScheduler scheduler,
             [NotNull] Func<TArg, IScheduledActionContext, Task> payload,
-            [NotNull] ScheduledActionOptions options) => builder.Schedule(name, scheduler, context => payload(ExtractArgumentFromOnDemandScheduler<TArg>(scheduler), context), options);
+            [NotNull] ScheduledActionOptions options) 
+            => builder.Schedule(name, scheduler, context => payload(ExtractArgumentFromOnDemandScheduler<TArg>(scheduler), context), options);
 
         private static TArg ExtractArgumentFromOnDemandScheduler<TArg>(IScheduler scheduler)
         {
