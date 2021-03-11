@@ -64,6 +64,35 @@ namespace Vostok.Applications.Scheduled
             [NotNull] this IScheduledActionsBuilder builder,
             [NotNull] string name,
             [NotNull] IScheduler scheduler,
+            [NotNull] Func<TArg, Task> payload,
+            [NotNull] ScheduledActionOptions options) => builder.Schedule(name, scheduler, _ => payload(ExtractArgumentFromOnDemandScheduler<TArg>(scheduler)), options);
+
+        public static IScheduledActionsBuilder Schedule<TArg>(
+            [NotNull] this IScheduledActionsBuilder builder,
+            [NotNull] string name,
+            [NotNull] IScheduler scheduler,
+            [NotNull] Action<TArg, IScheduledActionContext> payload)
+            => builder.Schedule(name, scheduler, context => payload(ExtractArgumentFromOnDemandScheduler<TArg>(scheduler), context));
+
+        public static IScheduledActionsBuilder Schedule<TArg>(
+            [NotNull] this IScheduledActionsBuilder builder,
+            [NotNull] string name,
+            [NotNull] IScheduler scheduler,
+            [NotNull] Func<TArg, IScheduledActionContext, Task> payload)
+            => builder.Schedule(name, scheduler, context => payload(ExtractArgumentFromOnDemandScheduler<TArg>(scheduler), context));
+
+        public static IScheduledActionsBuilder Schedule<TArg>(
+            [NotNull] this IScheduledActionsBuilder builder,
+            [NotNull] string name,
+            [NotNull] IScheduler scheduler,
+            [NotNull] Action<TArg, IScheduledActionContext> payload,
+            [NotNull] ScheduledActionOptions options)
+            => builder.Schedule(name, scheduler, context => payload(ExtractArgumentFromOnDemandScheduler<TArg>(scheduler), context), options);
+
+        public static IScheduledActionsBuilder Schedule<TArg>(
+            [NotNull] this IScheduledActionsBuilder builder,
+            [NotNull] string name,
+            [NotNull] IScheduler scheduler,
             [NotNull] Func<TArg, IScheduledActionContext, Task> payload,
             [NotNull] ScheduledActionOptions options) => builder.Schedule(name, scheduler, context => payload(ExtractArgumentFromOnDemandScheduler<TArg>(scheduler), context), options);
 
