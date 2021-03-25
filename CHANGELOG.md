@@ -1,3 +1,7 @@
+## 0.2.7 (25-03-2021):
+
+Added possibility to use `Demand` with arbitrary argument.
+
 ## 0.2.6 (19-02-2021):
 
 Added `VostokScheduledAsyncApplication` to support async initialization methods.
