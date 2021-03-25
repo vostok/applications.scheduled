@@ -7,13 +7,13 @@ namespace Vostok.Applications.Scheduled.Schedulers
 {
     internal class OnDemandScheduler : IScheduler, IScheduledActionEventListener
     {
-        private readonly object sync = new object();
+        protected readonly object Sync = new object();
         private readonly List<Signal> signals = new List<Signal>();
         private volatile bool activated;
 
         public void Demand()
         {
-            lock (sync)
+            lock (Sync)
                 activated = true;
         }
 
@@ -21,7 +21,7 @@ namespace Vostok.Applications.Scheduled.Schedulers
         {
             var signal = new Signal(TaskCreationOptions.RunContinuationsAsynchronously);
 
-            lock (sync)
+            lock (Sync)
             {
                 signals.Add(signal);
                 activated = true;
@@ -32,7 +32,7 @@ namespace Vostok.Applications.Scheduled.Schedulers
 
         public DateTimeOffset? ScheduleNext(DateTimeOffset from)
         {
-            lock (sync)
+            lock (Sync)
             {
                 if (!activated)
                     return null;
@@ -45,7 +45,7 @@ namespace Vostok.Applications.Scheduled.Schedulers
 
         public void OnSuccessfulIteration(IScheduler source)
         {
-            lock (sync)
+            lock (Sync)
             {
                 signals.ForEach(signal => signal.TrySetResult(true));
                 signals.Clear();
@@ -54,7 +54,7 @@ namespace Vostok.Applications.Scheduled.Schedulers
 
         public void OnFailedIteration(IScheduler source, Exception error)
         {
-            lock (sync)
+            lock (Sync)
             {
                 signals.ForEach(signal => signal.TrySetException(error));
                 signals.Clear();
