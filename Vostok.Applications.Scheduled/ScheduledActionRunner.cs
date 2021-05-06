@@ -49,6 +49,9 @@ namespace Vostok.Applications.Scheduled
             if (newAction.Name != action.Name)
                 throw new InvalidOperationException($"Name mismatch on scheduled action update (old = '{action.Name}', new = '{newAction.Name}').");
 
+            if (newAction.Scheduler is IStatefulScheduler newStateful && action.Scheduler is IStatefulScheduler oldStateful)
+                newStateful.TryCopyStateFrom(oldStateful);
+
             action = newAction;
         }
 

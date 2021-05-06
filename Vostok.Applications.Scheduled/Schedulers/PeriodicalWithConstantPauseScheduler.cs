@@ -5,7 +5,7 @@ using Vostok.Commons.Time;
 
 namespace Vostok.Applications.Scheduled.Schedulers
 {
-    internal class PeriodicalWithConstantPauseScheduler : IScheduler, IScheduledActionEventListener
+    internal class PeriodicalWithConstantPauseScheduler : IStatefulScheduler, IScheduledActionEventListener
     {
         private readonly Func<TimeSpan> periodProvider;
         private readonly bool delayFirstIteration;
@@ -34,6 +34,15 @@ namespace Vostok.Applications.Scheduled.Schedulers
 
         public void OnFailedIteration(IScheduler source, Exception error)
             => lastIterationEnd = PreciseDateTime.Now;
+
+        public void TryCopyStateFrom(IStatefulScheduler other)
+        {
+            if (other is PeriodicalWithConstantPauseScheduler periodical)
+            {
+                scheduledFirst.Value = periodical.scheduledFirst.Value;
+                lastIterationEnd = periodical.lastIterationEnd;
+            }
+        }
 
         public override string ToString() => $"PeriodicalWithConstantPause({periodProvider().ToPrettyString()})";
     }
