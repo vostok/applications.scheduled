@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
@@ -28,5 +29,9 @@ namespace Vostok.Applications.Scheduled
             [NotNull] IScheduler scheduler, 
             [NotNull] Func<IScheduledActionContext, Task> payload, 
             [NotNull] ScheduledActionOptions options);
+
+        void SetupDynamic([NotNull] Func<IScheduledActionsBuilder, CancellationToken, Task> configuration, TimeSpan actualizationPeriod);
+
+        void SetupDynamic([NotNull] Action<IScheduledActionsBuilder, CancellationToken> configuration, TimeSpan actualizationPeriod);
     }
 }

@@ -23,7 +23,7 @@ namespace Vostok.Applications.Scheduled.Helpers
 
             var builder = new ScheduledActionsBuilder(environment.Log, environment.Tracer, diagnostics);
 
-            await setup(builder, environment).ConfigureAwait(false);
+            await setup(builder, environment);
 
             return builder.BuildRunner();
         }

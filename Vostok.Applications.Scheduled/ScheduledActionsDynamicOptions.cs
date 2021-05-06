@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Vostok.Commons.Time;
 
 namespace Vostok.Applications.Scheduled
 {
     internal class ScheduledActionsDynamicOptions
     {
-        public ScheduledActionsDynamicOptions(Func<IScheduledActionsBuilder, CancellationToken, Task> setup)
-            => Setup = setup;
+        public ScheduledActionsDynamicOptions(Func<IScheduledActionsBuilder, CancellationToken, Task> configuration, TimeSpan actualizationPeriod)
+        {
+            Configuration = configuration;
+            ActualizationPeriod = actualizationPeriod;
+        }
 
-        public Func<IScheduledActionsBuilder, CancellationToken, Task> Setup { get; }
+        public Func<IScheduledActionsBuilder, CancellationToken, Task> Configuration { get; }
 
-        public TimeSpan ActualizationPeriod { get; set; } = 10.Seconds();
+        public TimeSpan ActualizationPeriod { get; }
     }
 }

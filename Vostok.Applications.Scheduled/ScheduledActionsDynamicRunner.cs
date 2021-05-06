@@ -52,9 +52,12 @@ namespace Vostok.Applications.Scheduled
                 actionOptions,
                 async context =>
                 {
-                    var builder = new ScheduledActionsBuilder(log, tracer, diagnostics);
+                    var builder = new ScheduledActionsBuilder(log, tracer, diagnostics)
+                    {
+                        SupportsDynamicConfiguration = false
+                    };
 
-                    await options.Setup(builder, context.CancellationToken).ConfigureAwait(false);
+                    await options.Configuration(builder, context.CancellationToken);
 
                     Actualize(builder.Actions, context.CancellationToken);
                 });

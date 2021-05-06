@@ -12,7 +12,7 @@ namespace Vostok.Applications.Scheduled
         private volatile IScheduledActionsRunner runner;
 
         public async Task InitializeAsync(IVostokHostingEnvironment environment)
-            => runner = await ScheduledApplicationHelper.InitializeAsync(environment, SetupAsync).ConfigureAwait(false);
+            => runner = await ScheduledApplicationHelper.InitializeAsync(environment, SetupAsync);
 
         public Task RunAsync(IVostokHostingEnvironment environment)
             => runner.RunAsync(environment.ShutdownToken);
