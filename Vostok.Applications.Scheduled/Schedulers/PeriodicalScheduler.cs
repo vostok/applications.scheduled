@@ -44,6 +44,6 @@ namespace Vostok.Applications.Scheduled.Schedulers
             return next;
         }
 
-        public override string ToString() => $"Periodical({periodProvider()})";
+        public override string ToString() => $"Periodical({periodProvider().ToPrettyString()})";
     }
 }

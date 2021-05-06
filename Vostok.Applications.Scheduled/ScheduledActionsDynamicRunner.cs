@@ -54,7 +54,8 @@ namespace Vostok.Applications.Scheduled
                 {
                     var builder = new ScheduledActionsBuilder(log, tracer, diagnostics)
                     {
-                        SupportsDynamicConfiguration = false
+                        SupportsDynamicConfiguration = false,
+                        ShouldLogScheduledActions = false
                     };
 
                     await options.Configuration(builder, context.CancellationToken);
@@ -70,37 +71,58 @@ namespace Vostok.Applications.Scheduled
             foreach (var pair in userRunners)
             {
                 if (!actualIndex.Contains(pair.Key))
+                {
+                    log.Info("Shutting down action '{ScheduledActionName}'..", pair.Key);
+
                     pair.Value.RequestShutdown();
+                }
             }
 
             foreach (var action in actualActions)
             {
-                var runner = userRunners.GetOrAdd(action.Name, _ => LaunchUserActionRunner(action, cancellation));
-                if (runner.CanBeUpdated)
-                    runner.Update(action);
+                if (userRunners.TryGetValue(action.Name, out var runner))
+                {
+                    if (runner.CanBeUpdated)
+                    {
+                        log.Info("Keeping action '{ScheduledActionName}' with scheduler '{SchedulerInfo}'..", action.Name, action.Scheduler);
+
+                        runner.Update(action);
+                    }
+                }
+                else
+                {
+                    log.Info("Launching action '{ScheduledActionName}' with scheduler '{SchedulerInfo}'..", action.Name, action.Scheduler);
+
+                    userRunners[action.Name] = LaunchUserActionRunner(action, cancellation);
+                }
             }
         }
 
         private UserActionRunner LaunchUserActionRunner(ScheduledAction action, CancellationToken cancellationToken)
         {
-            var runner = new ScheduledActionRunner(action, log, tracer, diagnostics);
-
-            var personalCancellationSource = new CancellationTokenSource();
-
-            var linkedCancellationSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, personalCancellationSource.Token);
-
-            var runnerTask = runner.RunAsync(linkedCancellationSource.Token).ContinueWith(task =>
+            using (ExecutionContext.SuppressFlow())
             {
-                userRunners.TryRemove(action.Name, out _);
+                var runner = new ScheduledActionRunner(action, log, tracer, diagnostics);
 
-                runner.Dispose();
+                var personalCancellationSource = new CancellationTokenSource();
 
-                linkedCancellationSource.Dispose();
+                var linkedCancellationSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, personalCancellationSource.Token);
 
-                personalCancellationSource.Dispose();
-            });
+                var runnerTask = Task.Run(() => runner.RunAsync(linkedCancellationSource.Token))
+                    .ContinueWith(
+                        task =>
+                        {
+                            userRunners.TryRemove(action.Name, out _);
 
-            return new UserActionRunner(personalCancellationSource, runner, runnerTask);
+                            runner.Dispose();
+
+                            linkedCancellationSource.Dispose();
+
+                            personalCancellationSource.Dispose();
+                        });
+
+                return new UserActionRunner(personalCancellationSource, runner, runnerTask);
+            }
         }
 
         private class UserActionRunner

@@ -40,6 +40,8 @@ namespace Vostok.Applications.Scheduled
 
         public bool SupportsDynamicConfiguration { get; set; } = true;
 
+        public bool ShouldLogScheduledActions { get; set; } = true;
+
         public IScheduledActionsRunner BuildRunner()
         {
             if (dynamicOptions != null)
@@ -64,12 +66,13 @@ namespace Vostok.Applications.Scheduled
 
             Actions.Add(new ScheduledAction(name, scheduler, options, payload));
 
-            log.Info("Scheduled '{ActionName}' action with scheduler '{Scheduler}'. ", name, scheduler.GetType().Name);
+            if (ShouldLogScheduledActions)
+                log.Info("Scheduled '{ActionName}' action with scheduler '{Scheduler}'. ", name, scheduler.GetType().Name);
 
             return this;
         }
 
-        public void SetupDynamic(Action<IScheduledActionsBuilder, CancellationToken> configuration, TimeSpan actualizationPeriod)
+        public void SetupDynamic(Action<IScheduledActionsBuilder> configuration, TimeSpan actualizationPeriod)
             => SetupDynamic(WrapConfiguration(configuration), actualizationPeriod);
 
         public void SetupDynamic(Func<IScheduledActionsBuilder, CancellationToken, Task> configuration, TimeSpan actualizationPeriod)
@@ -94,11 +97,11 @@ namespace Vostok.Applications.Scheduled
             };
         }
 
-        private static Func<IScheduledActionsBuilder, CancellationToken, Task> WrapConfiguration(Action<IScheduledActionsBuilder, CancellationToken> configuration)
+        private static Func<IScheduledActionsBuilder, CancellationToken, Task> WrapConfiguration(Action<IScheduledActionsBuilder> configuration)
         {
             return (builder, cancellationToken) =>
             {
-                configuration(builder, cancellationToken);
+                configuration(builder);
                 return Task.CompletedTask;
             };
         }

@@ -32,6 +32,6 @@ namespace Vostok.Applications.Scheduled
 
         void SetupDynamic([NotNull] Func<IScheduledActionsBuilder, CancellationToken, Task> configuration, TimeSpan actualizationPeriod);
 
-        void SetupDynamic([NotNull] Action<IScheduledActionsBuilder, CancellationToken> configuration, TimeSpan actualizationPeriod);
+        void SetupDynamic([NotNull] Action<IScheduledActionsBuilder> configuration, TimeSpan actualizationPeriod);
     }
 }
