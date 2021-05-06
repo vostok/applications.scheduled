@@ -58,6 +58,8 @@ namespace Vostok.Applications.Scheduled
             return this;
         }
 
+        internal List<ScheduledAction> Actions => actions;
+
         private static Func<IScheduledActionContext, Task> WrapAction(Action<IScheduledActionContext> action)
         {
             return context =>
