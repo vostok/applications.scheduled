@@ -16,8 +16,9 @@ namespace Vostok.Applications.Scheduled
 {
     internal class ScheduledActionRunner
     {
+        private volatile ScheduledAction action;
+
         private readonly ScheduledActionMonitor monitor = new ScheduledActionMonitor();
-        private readonly ScheduledAction action;
         private readonly ILog log;
         private readonly ITracer tracer;
 
@@ -34,6 +35,14 @@ namespace Vostok.Applications.Scheduled
                 action.Scheduler.ToString(), 
                 action.Options, 
                 monitor.BuildStatistics());
+
+        public void Update(ScheduledAction newAction)
+        {
+            if (newAction.Name != action.Name)
+                throw new InvalidOperationException($"Name mismatch on scheduled action update (old = '{action.Name}', new = '{newAction.Name}').");
+
+            action = newAction;
+        }
 
         public async Task RunAsync(CancellationToken token)
         {
