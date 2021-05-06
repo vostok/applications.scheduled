@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Vostok.Commons.Helpers.Extensions;
@@ -18,8 +18,7 @@ namespace Vostok.Applications.Scheduled
         private readonly ITracer tracer;
         private readonly ILog log;
         private readonly ScheduledActionRunner actualizationRunner;
-        private readonly ConcurrentDictionary<string, (ScheduledActionRunner runner, Task task)> userRunners;
-        private volatile TaskCompletionSource<List<ScheduledAction>> actualizationSignal;
+        private readonly ConcurrentDictionary<string, UserActionRunner> userRunners;
 
         public ScheduledActionsDynamicRunner(IVostokApplicationDiagnostics diagnostics, ITracer tracer, ILog log, ScheduledActionsDynamicOptions options)
         {
@@ -27,43 +26,19 @@ namespace Vostok.Applications.Scheduled
             this.tracer = tracer;
             this.log = log;
             
-            actualizationSignal = new TaskCompletionSource<List<ScheduledAction>>(TaskCreationOptions.RunContinuationsAsynchronously);
             actualizationRunner = new ScheduledActionRunner(ConfigureActualizationAction(options), log, tracer, diagnostics);
-
-            userRunners = new ConcurrentDictionary<string, (ScheduledActionRunner runner, Task task)>();
+            userRunners = new ConcurrentDictionary<string, UserActionRunner>();
         }
 
         public async Task RunAsync(CancellationToken cancellationToken)
         {
-            var cancellationTask = cancellationToken.WaitAsync();
-            var actualizerTask = actualizationRunner.RunAsync(cancellationToken);
+            await actualizationRunner.RunAsync(cancellationToken).SilentlyContinue();
 
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                var completedTask = await Task.WhenAny(actualizationSignal.Task, cancellationTask);
-
-                if (completedTask == cancellationTask)
-                {
-                    // todo (iloktionov, 06.05.2021): break out
-                }
-
-                if (completedTask == actualizationSignal.Task)
-                {
-                    // todo (iloktionov, 06.05.2021): actualize
-                }
-
-                // todo (iloktionov, 06.05.2021): handle user runner crash
-            }
-
-            // todo (iloktionov, 06.05.2021): wait for everything to complete
+            await Task.WhenAll(userRunners.Select(pair => pair.Value.WaitForCompletion()));
         }
 
         public void Dispose()
-        {
-            actualizationRunner.Dispose();
-
-            throw new NotImplementedException();
-        }
+            => actualizationRunner.Dispose();
 
         private ScheduledAction ConfigureActualizationAction(ScheduledActionsDynamicOptions options)
         {
@@ -77,30 +52,87 @@ namespace Vostok.Applications.Scheduled
                 actionOptions,
                 async context =>
                 {
-                    if (actualizationSignal.Task.IsCompleted)
-                        return;
-
                     var builder = new ScheduledActionsBuilder(log, tracer, diagnostics);
 
                     await options.Setup(builder, context.CancellationToken).ConfigureAwait(false);
 
-                    actualizationSignal.TrySetResult(builder.Actions);
+                    Actualize(builder.Actions, context.CancellationToken);
                 });
         }
 
-        // todo (iloktionov, 06.05.2021): local cancellation
-        private (ScheduledActionRunner runner, Task task) LaunchRunner(ScheduledAction action, CancellationToken cancellation)
+        private void Actualize(List<ScheduledAction> actualActions, CancellationToken cancellation)
+        {
+            var actualIndex = new HashSet<string>(actualActions.Select(action => action.Name));
+
+            foreach (var pair in userRunners)
+            {
+                if (!actualIndex.Contains(pair.Key))
+                    pair.Value.RequestShutdown();
+            }
+
+            foreach (var action in actualActions)
+            {
+                var runner = userRunners.GetOrAdd(action.Name, _ => LaunchUserActionRunner(action, cancellation));
+                if (runner.CanBeUpdated)
+                    runner.Update(action);
+            }
+        }
+
+        private UserActionRunner LaunchUserActionRunner(ScheduledAction action, CancellationToken cancellationToken)
         {
             var runner = new ScheduledActionRunner(action, log, tracer, diagnostics);
 
-            var runnerTask = runner.RunAsync(cancellation).ContinueWith(task =>
+            var personalCancellationSource = new CancellationTokenSource();
+
+            var linkedCancellationSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, personalCancellationSource.Token);
+
+            var runnerTask = runner.RunAsync(linkedCancellationSource.Token).ContinueWith(task =>
             {
                 userRunners.TryRemove(action.Name, out _);
 
                 runner.Dispose();
+
+                linkedCancellationSource.Dispose();
+
+                personalCancellationSource.Dispose();
             });
 
-            return (runner, runnerTask);
+            return new UserActionRunner(personalCancellationSource, runner, runnerTask);
+        }
+
+        private class UserActionRunner
+        {
+            private readonly CancellationTokenSource cancellation;
+            private readonly ScheduledActionRunner runner;
+            private readonly Task runnerTask;
+
+            public UserActionRunner(CancellationTokenSource cancellation, ScheduledActionRunner runner, Task runnerTask)
+            {
+                this.cancellation = cancellation;
+                this.runner = runner;
+                this.runnerTask = runnerTask;
+            }
+
+            public bool CanBeUpdated
+                => !runnerTask.IsCompleted && !cancellation.IsCancellationRequested;
+
+            public void Update(ScheduledAction action) 
+                => runner.Update(action);
+
+            public Task WaitForCompletion() 
+                => runnerTask;
+
+            public void RequestShutdown()
+            {
+                try
+                {
+                    cancellation.Cancel();
+                }
+                catch
+                {
+                     // ignored (potential harmless race with CTS disposal)
+                }
+            }
         }
     }
 }
