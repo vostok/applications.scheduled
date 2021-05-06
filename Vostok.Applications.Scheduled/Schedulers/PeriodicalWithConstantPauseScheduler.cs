@@ -35,6 +35,6 @@ namespace Vostok.Applications.Scheduled.Schedulers
         public void OnFailedIteration(IScheduler source, Exception error)
             => lastIterationEnd = PreciseDateTime.Now;
 
-        public override string ToString() => $"PeriodicalWithConstantPause({periodProvider()})";
+        public override string ToString() => $"PeriodicalWithConstantPause({periodProvider().ToPrettyString()})";
     }
 }
