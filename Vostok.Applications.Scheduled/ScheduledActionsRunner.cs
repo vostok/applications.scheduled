@@ -21,8 +21,6 @@ namespace Vostok.Applications.Scheduled
             this.log = log;
         }
 
-        public IEnumerable<ScheduledActionRunner> Runners => runners;
-
         public async Task RunAsync(CancellationToken token)
         {
             if (!runners.Any())
@@ -51,6 +49,12 @@ namespace Vostok.Applications.Scheduled
                 {
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            foreach (var runner in runners)
+                runner.Dispose();
         }
     }
 }

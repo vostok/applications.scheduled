@@ -1,11 +1,12 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace Vostok.Applications.Scheduled
 {
     [PublicAPI]
-    public interface IScheduledActionsRunner
+    public interface IScheduledActionsRunner : IDisposable
     {
         Task RunAsync(CancellationToken cancellationToken);
     }
