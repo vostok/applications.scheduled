@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Vostok.Applications.Scheduled.Diagnostics;
 using Vostok.Applications.Scheduled.Schedulers;
 using Vostok.Commons.Time;
+using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Context;
 using Vostok.Tracing.Abstractions;
@@ -14,7 +16,7 @@ using Vostok.Tracing.Extensions.Custom;
 
 namespace Vostok.Applications.Scheduled
 {
-    internal class ScheduledActionRunner
+    internal class ScheduledActionRunner : IDisposable
     {
         private volatile ScheduledAction action;
 
@@ -22,11 +24,17 @@ namespace Vostok.Applications.Scheduled
         private readonly ILog log;
         private readonly ITracer tracer;
 
-        public ScheduledActionRunner(ScheduledAction action, ILog log, ITracer tracer)
+        private volatile IDisposable diagnosticInfoRegistration;
+        private volatile IDisposable healthCheckRegistration;
+
+        public ScheduledActionRunner(ScheduledAction action, ILog log, ITracer tracer, IVostokApplicationDiagnostics diagnostics)
         {
             this.action = action;
-            this.log = log;
             this.tracer = tracer;
+            this.log = log;
+
+            if (diagnostics != null)
+                RegisterDiagnostics(diagnostics);
         }
 
         public ScheduledActionInfo GetInfo()
@@ -42,6 +50,12 @@ namespace Vostok.Applications.Scheduled
                 throw new InvalidOperationException($"Name mismatch on scheduled action update (old = '{action.Name}', new = '{newAction.Name}').");
 
             action = newAction;
+        }
+
+        public void Dispose()
+        {
+            diagnosticInfoRegistration?.Dispose();
+            healthCheckRegistration?.Dispose();
         }
 
         public async Task RunAsync(CancellationToken token)
@@ -221,6 +235,17 @@ namespace Vostok.Applications.Scheduled
             else
                 log.Info("Next execution time = {NextExecutionTime:yyyy-MM-dd HH:mm:ss.fff} (~{TimeToNextExecution} from now).", 
                     nextExecutionTime.Value.DateTime, TimeSpanArithmetics.Max(TimeSpan.Zero, nextExecutionTime.Value - PreciseDateTime.Now).ToPrettyString());
+        }
+
+        private void RegisterDiagnostics(IVostokApplicationDiagnostics diagnostics)
+        {
+            var info = GetInfo();
+            var infoEntry = new DiagnosticEntry("scheduled", info.Name);
+            var infoProvider = new ScheduledActionsInfoProvider(GetInfo);
+            var healthCheck = new ScheduledActionsHealthCheck(GetInfo);
+
+            diagnosticInfoRegistration = diagnostics.Info.RegisterProvider(infoEntry, infoProvider);
+            healthCheckRegistration = diagnostics.HealthTracker.RegisterCheck($"scheduled ({info.Name})", healthCheck);
         }
     }
 }
