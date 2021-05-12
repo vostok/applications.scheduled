@@ -16,6 +16,7 @@ namespace Vostok.Applications.Scheduled
         private readonly ILog log;
         private readonly ITracer tracer;
         private readonly IVostokApplicationDiagnostics diagnostics;
+        private readonly List<ScheduledAction> actions;
 
         private volatile ScheduledActionsDynamicOptions dynamicOptions;
 
@@ -35,7 +36,7 @@ namespace Vostok.Applications.Scheduled
             this.tracer = tracer;
             this.diagnostics = diagnostics;
 
-            Actions = new List<ScheduledAction>();
+            actions = new List<ScheduledAction>();
         }
 
         public bool SupportsDynamicConfiguration { get; set; } = true;
@@ -45,9 +46,9 @@ namespace Vostok.Applications.Scheduled
         public IScheduledActionsRunner BuildRunner()
         {
             if (dynamicOptions != null)
-                return new ScheduledActionsDynamicRunner(diagnostics, tracer, log, dynamicOptions);
+                return new ScheduledActionsDynamicRunner(actions, diagnostics, tracer, log, dynamicOptions);
 
-            return new ScheduledActionsRunner(Actions.Select(action => new ScheduledActionRunner(action, log, tracer, diagnostics)).ToArray(), log);
+            return new ScheduledActionsRunner(actions.Select(action => new ScheduledActionRunner(action, log, tracer, diagnostics)).ToArray(), log);
         }
 
         public IScheduledActionsBuilder Schedule(string name, IScheduler scheduler, Action<IScheduledActionContext> payload)
@@ -60,17 +61,7 @@ namespace Vostok.Applications.Scheduled
             => Schedule(name, scheduler, WrapAction(payload), options);
 
         public IScheduledActionsBuilder Schedule(string name, IScheduler scheduler, Func<IScheduledActionContext, Task> payload, ScheduledActionOptions options)
-        {
-            if (dynamicOptions != null)
-                throw new InvalidOperationException("Dynamic and static configuration modes can't be mixed.");
-
-            Actions.Add(new ScheduledAction(name, scheduler, options, payload));
-
-            if (ShouldLogScheduledActions)
-                log.Info("Scheduled '{ActionName}' action with scheduler '{Scheduler}'. ", name, scheduler.GetType().Name);
-
-            return this;
-        }
+            => Schedule(new ScheduledAction(name, scheduler, options, payload));
 
         public void SetupDynamic(Action<IScheduledActionsBuilder> configuration, TimeSpan actualizationPeriod)
             => SetupDynamic(WrapConfiguration(configuration), actualizationPeriod);
@@ -80,13 +71,23 @@ namespace Vostok.Applications.Scheduled
             if (!SupportsDynamicConfiguration)
                 throw new InvalidOperationException("Dynamic configuration mode is not supported by this builder.");
 
-            if (Actions.Any())
-                throw new InvalidOperationException("Dynamic and static configuration modes can't be mixed.");
+            if (dynamicOptions != null)
+                throw new InvalidOperationException("Can't overwrite existing dynamic configuration.");
 
             dynamicOptions = new ScheduledActionsDynamicOptions(configuration, actualizationPeriod);
         }
 
-        internal List<ScheduledAction> Actions { get; }
+        internal IReadOnlyList<ScheduledAction> Actions => actions;
+
+        internal IScheduledActionsBuilder Schedule(ScheduledAction action)
+        {
+            actions.Add(action);
+
+            if (ShouldLogScheduledActions)
+                log.Info("Scheduled '{ActionName}' action with scheduler '{Scheduler}'. ", action.Name, action.Scheduler.GetType().Name);
+
+            return this;
+        }
 
         private static Func<IScheduledActionContext, Task> WrapAction(Action<IScheduledActionContext> action)
         {

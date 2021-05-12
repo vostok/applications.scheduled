@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -12,16 +13,23 @@ using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Applications.Scheduled
 {
-    internal class ScheduledActionsDynamicRunner : IScheduledActionsRunner
+    internal class ScheduledActionsDynamicRunner : IScheduledActionsRunner, IDisposable
     {
+        private readonly IReadOnlyList<ScheduledAction> staticActions;
         private readonly IVostokApplicationDiagnostics diagnostics;
         private readonly ITracer tracer;
         private readonly ILog log;
         private readonly ScheduledActionRunner actualizationRunner;
         private readonly ConcurrentDictionary<string, UserActionRunner> userRunners;
 
-        public ScheduledActionsDynamicRunner(IVostokApplicationDiagnostics diagnostics, ITracer tracer, ILog log, ScheduledActionsDynamicOptions options)
+        public ScheduledActionsDynamicRunner(
+            IReadOnlyList<ScheduledAction> staticActions,
+            IVostokApplicationDiagnostics diagnostics, 
+            ITracer tracer, 
+            ILog log, 
+            ScheduledActionsDynamicOptions options)
         {
+            this.staticActions = staticActions;
             this.diagnostics = diagnostics;
             this.tracer = tracer;
             this.log = log;
@@ -58,13 +66,16 @@ namespace Vostok.Applications.Scheduled
                         ShouldLogScheduledActions = false
                     };
 
+                    foreach (var action in staticActions)
+                        builder.Schedule(action);
+
                     await options.Configuration(builder, context.CancellationToken);
 
                     Actualize(builder.Actions, context.CancellationToken);
                 });
         }
 
-        private void Actualize(List<ScheduledAction> actualActions, CancellationToken cancellation)
+        private void Actualize(IReadOnlyList<ScheduledAction> actualActions, CancellationToken cancellation)
         {
             var actualIndex = new HashSet<string>(actualActions.Select(action => action.Name));
 

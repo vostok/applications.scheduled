@@ -19,7 +19,7 @@ namespace Vostok.Applications.Scheduled
 
         public void Dispose()
         {
-            runner?.Dispose();
+            (runner as IDisposable)?.Dispose();
             DoDisposeAsync().GetAwaiter().GetResult();
             DoDispose();
         }
