@@ -1,14 +1,15 @@
-﻿using Vostok.Hosting.Abstractions.Diagnostics;
+﻿using System;
+using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Applications.Scheduled.Diagnostics
 {
     internal class ScheduledActionsInfoProvider : IDiagnosticInfoProvider
     {
-        private readonly ScheduledActionRunner runner;
+        private readonly Func<ScheduledActionInfo> infoProvider;
 
-        public ScheduledActionsInfoProvider(ScheduledActionRunner runner)
-            => this.runner = runner;
+        public ScheduledActionsInfoProvider(Func<ScheduledActionInfo> infoProvider)
+            => this.infoProvider = infoProvider;
 
-        public object Query() => runner.GetInfo();
+        public object Query() => infoProvider();
     }
 }

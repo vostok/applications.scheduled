@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Vostok.Applications.Scheduled.Schedulers
 {
-    internal class MultiScheduler : IScheduler, IScheduledActionEventListener
+    internal class MultiScheduler : IStatefulScheduler, IScheduledActionEventListener
     {
         private readonly IReadOnlyList<IScheduler> schedulers;
 
@@ -42,6 +42,18 @@ namespace Vostok.Applications.Scheduled.Schedulers
         {
             foreach (var scheduler in schedulers) 
                 scheduler.OnFailedIteration(source, error);
+        }
+
+        public void TryCopyStateFrom(IStatefulScheduler other)
+        {
+            if (other is MultiScheduler multi && multi.schedulers.Count == schedulers.Count)
+            {
+                for (var i = 0; i < schedulers.Count; i++)
+                {
+                    if (schedulers[i] is IStatefulScheduler stateful && multi.schedulers[i] is IStatefulScheduler otherStateful && stateful.GetType() == otherStateful.GetType())
+                        stateful.TryCopyStateFrom(otherStateful);
+                }
+            }
         }
 
         public override string ToString() => $"Multi({string.Join(", ", schedulers)})";
