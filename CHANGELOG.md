@@ -1,3 +1,7 @@
+## 0.2.8 (12-05-2021):
+
+Implemented dynamic configuration of scheduled actions set (https://github.com/vostok/applications.scheduled/issues/1).
+
 ## 0.2.7 (25-03-2021):
 
 Added possibility to use `Demand` with arbitrary argument.
