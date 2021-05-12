@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Applications.Scheduled.Helpers;
@@ -10,21 +9,17 @@ namespace Vostok.Applications.Scheduled
     [PublicAPI]
     public abstract class VostokScheduledAsyncApplication : IVostokApplication, IDisposable
     {
-        private List<IDisposable> disposables;
-
-        private volatile ScheduledActionsRunner runner;
+        private volatile IScheduledActionsRunner runner;
 
         public async Task InitializeAsync(IVostokHostingEnvironment environment)
-        {
-            (runner, disposables) = await ScheduledApplicationHelper.InitializeAsync(environment, SetupAsync).ConfigureAwait(false);
-        }
+            => runner = await ScheduledApplicationHelper.InitializeAsync(environment, SetupAsync);
 
         public Task RunAsync(IVostokHostingEnvironment environment)
             => runner.RunAsync(environment.ShutdownToken);
 
         public void Dispose()
         {
-            disposables?.ForEach(disposable => disposable.Dispose());
+            (runner as IDisposable)?.Dispose();
             DoDisposeAsync().GetAwaiter().GetResult();
         }
 

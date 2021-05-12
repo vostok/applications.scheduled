@@ -10,7 +10,7 @@ using Vostok.Logging.Abstractions;
 
 namespace Vostok.Applications.Scheduled
 {
-    internal class ScheduledActionsRunner : IScheduledActionsRunner
+    internal class ScheduledActionsRunner : IScheduledActionsRunner, IDisposable
     {
         private readonly IReadOnlyList<ScheduledActionRunner> runners;
         private readonly ILog log;
@@ -20,8 +20,6 @@ namespace Vostok.Applications.Scheduled
             this.runners = runners;
             this.log = log;
         }
-
-        public IEnumerable<ScheduledActionRunner> Runners => runners;
 
         public async Task RunAsync(CancellationToken token)
         {
@@ -51,6 +49,12 @@ namespace Vostok.Applications.Scheduled
                 {
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            foreach (var runner in runners)
+                runner.Dispose();
         }
     }
 }

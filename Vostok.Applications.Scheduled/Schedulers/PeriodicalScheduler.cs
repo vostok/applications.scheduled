@@ -5,7 +5,7 @@ using Vostok.Commons.Time;
 
 namespace Vostok.Applications.Scheduled.Schedulers
 {
-    internal class PeriodicalScheduler : IScheduler
+    internal class PeriodicalScheduler : IStatefulScheduler
     {
         private readonly Func<TimeSpan> periodProvider;
         private readonly Func<double> jitterProvider;
@@ -44,6 +44,12 @@ namespace Vostok.Applications.Scheduled.Schedulers
             return next;
         }
 
-        public override string ToString() => $"Periodical({periodProvider()})";
+        public void TryCopyStateFrom(IStatefulScheduler other)
+        {
+            if (other is PeriodicalScheduler periodical && periodical.scheduledFirst)
+                scheduledFirst.TrySetTrue();
+        }
+
+        public override string ToString() => $"Periodical({periodProvider().ToPrettyString()})";
     }
 }
