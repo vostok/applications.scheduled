@@ -10,7 +10,7 @@ using Vostok.Logging.Abstractions;
 
 namespace Vostok.Applications.Scheduled
 {
-    internal class ScheduledActionsRunner : IScheduledActionsRunner
+    internal class ScheduledActionsRunner : IScheduledActionsRunner, IDisposable
     {
         private readonly IReadOnlyList<ScheduledActionRunner> runners;
         private readonly ILog log;

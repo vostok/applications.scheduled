@@ -38,11 +38,15 @@ namespace Vostok.Applications.Scheduled
         }
 
         public ScheduledActionInfo GetInfo()
-            => new ScheduledActionInfo(
-                action.Name, 
-                action.Scheduler.ToString(), 
-                action.Options, 
+        {
+            var currentAction = action;
+
+            return new ScheduledActionInfo(
+                currentAction.Name,
+                currentAction.Scheduler.ToString(),
+                currentAction.Options,
                 monitor.BuildStatistics());
+        }
 
         public void Update(ScheduledAction newAction)
         {
@@ -119,10 +123,11 @@ namespace Vostok.Applications.Scheduled
                 if (nextExecutionTime <= lastExecutionTime)
                     return nextExecutionScheduler;
 
+                var actualizationPeriod = action.Options.ActualizationPeriod;
                 var timeToWait = TimeSpanArithmetics.Max(TimeSpan.Zero, nextExecutionTime.Value - PreciseDateTime.Now);
-                if (timeToWait > action.Options.ActualizationPeriod)
+                if (timeToWait > actualizationPeriod)
                 {
-                    await Task.Delay(action.Options.ActualizationPeriod, token);
+                    await Task.Delay(actualizationPeriod, token);
                     continue;
                 }
 
