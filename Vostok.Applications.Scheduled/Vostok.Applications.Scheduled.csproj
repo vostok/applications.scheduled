@@ -85,7 +85,7 @@
   <ItemGroup>
     <PackageReference Include="ncrontab" Version="3.3.1" PrivateAssets="all" />
   </ItemGroup>
-  <Target Name="RepackAssemblies" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+  <Target Name="RepackAssemblies" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' And '$(TargetFramework)' != '' And '$(TargetFramework)' != ''">
     <PropertyGroup>
       <ILRepackExecutable>dotnet "$(MSBuildThisFileDirectory)../../vostok.devtools.ilrepack.bin/netcoreapp2.1/ILRepack.Core.dll"</ILRepackExecutable>
       <BinPath>$(ProjectDir)$(OutputPath)</BinPath>
