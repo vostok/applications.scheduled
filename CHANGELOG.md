@@ -1,3 +1,7 @@
+## 0.2.9 (06-12-2021):
+
+Added `net6.0` target.
+
 ## 0.2.8 (12-05-2021):
 
 Implemented dynamic configuration of scheduled actions set (https://github.com/vostok/applications.scheduled/issues/1).
