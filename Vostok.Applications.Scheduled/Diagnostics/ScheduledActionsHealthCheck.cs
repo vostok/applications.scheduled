@@ -17,7 +17,7 @@ namespace Vostok.Applications.Scheduled.Diagnostics
             var info = infoProvider();
 
             if (!info.Statistics.LastIterationSuccessful)
-                return Task.FromResult(HealthCheckResult.Degraded($"Scheduled action '{info.Name}' has failed on its last execution with error '{info.Statistics.LastErrorMessage}'."));
+                return Task.FromResult(HealthCheckResult.Degraded($"Scheduled action '{info.Name}' has failed on its last execution at {info.Statistics.LastError:yyyy-MM-dd HH:mm:ss.fff} with error '{info.Statistics.LastErrorMessage}'."));
 
             return Task.FromResult(HealthCheckResult.Healthy());
         }
