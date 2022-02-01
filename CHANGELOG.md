@@ -1,3 +1,7 @@
+## 0.2.11 (06-12-2021):
+
+Log last execution time in health check.
+
 ## 0.2.10 (06-12-2021):
 
 Added `net6.0` target.
