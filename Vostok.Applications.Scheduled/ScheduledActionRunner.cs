@@ -70,13 +70,13 @@ namespace Vostok.Applications.Scheduled
             var lastExecutionTime = PreciseDateTime.Now;
             var iteration = 0L;
 
-            using (new OperationContextToken(action.Name))
+            using (new OperationContextToken("{Action}", action.Name))
             {
                 try
                 {
                     while (!token.IsCancellationRequested)
                     {
-                        using (new OperationContextToken($"{++iteration}"))
+                        using (new OperationContextToken("{Iteration}", ++iteration))
                         {
                             var scheduler = await WaitForNextExecutionAsync(lastExecutionTime, token);
 

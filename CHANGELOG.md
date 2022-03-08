@@ -1,3 +1,7 @@
+## 0.2.12 (08-03-2022):
+
+Used new structured OperationContextToken.
+
 ## 0.2.11 (06-12-2021):
 
 Log last execution time in health check.
