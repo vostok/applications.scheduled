@@ -1,0 +1,98 @@
+abstract Vostok.Applications.Scheduled.VostokScheduledApplication.Setup(Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment) -> void
+abstract Vostok.Applications.Scheduled.VostokScheduledAsyncApplication.SetupAsync(Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment) -> System.Threading.Tasks.Task
+static Vostok.Applications.Scheduled.ICompositeApplicationBuilderExtensions.AddScheduled(this Vostok.Hosting.Abstractions.Composite.ICompositeApplicationBuilder builder, System.Action<Vostok.Applications.Scheduled.IScheduledActionsBuilder, Vostok.Hosting.Abstractions.IVostokHostingEnvironment> setup) -> Vostok.Hosting.Abstractions.Composite.ICompositeApplicationBuilder
+static Vostok.Applications.Scheduled.ICompositeApplicationBuilderExtensions.AddScheduled(this Vostok.Hosting.Abstractions.Composite.ICompositeApplicationBuilder builder, System.Action<Vostok.Applications.Scheduled.IScheduledActionsBuilder> setup) -> Vostok.Hosting.Abstractions.Composite.ICompositeApplicationBuilder
+static Vostok.Applications.Scheduled.IScheduledActionContextExtensions.IsOnDemandIteration(this Vostok.Applications.Scheduled.IScheduledActionContext context) -> bool
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Action payload) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Action payload, Vostok.Applications.Scheduled.ScheduledActionOptions options) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Func<System.Threading.Tasks.Task> payload) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Func<System.Threading.Tasks.Task> payload, Vostok.Applications.Scheduled.ScheduledActionOptions options) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule<TArg>(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Action<TArg, Vostok.Applications.Scheduled.IScheduledActionContext> payload) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule<TArg>(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Action<TArg, Vostok.Applications.Scheduled.IScheduledActionContext> payload, Vostok.Applications.Scheduled.ScheduledActionOptions options) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule<TArg>(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Action<TArg> payload) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule<TArg>(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Action<TArg> payload, Vostok.Applications.Scheduled.ScheduledActionOptions options) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule<TArg>(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Func<TArg, System.Threading.Tasks.Task> payload) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule<TArg>(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Func<TArg, System.Threading.Tasks.Task> payload, Vostok.Applications.Scheduled.ScheduledActionOptions options) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule<TArg>(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Func<TArg, Vostok.Applications.Scheduled.IScheduledActionContext, System.Threading.Tasks.Task> payload) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions.Schedule<TArg>(this Vostok.Applications.Scheduled.IScheduledActionsBuilder builder, string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Func<TArg, Vostok.Applications.Scheduled.IScheduledActionContext, System.Threading.Tasks.Task> payload, Vostok.Applications.Scheduled.ScheduledActionOptions options) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+static Vostok.Applications.Scheduled.Scheduler.AlignedPeriodical(System.Func<System.TimeSpan> periodProvider) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.AlignedPeriodical(System.TimeSpan period) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.Crontab(string schedule) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.Crontab(System.Func<string> scheduleProvider) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.Fixed(System.Collections.Generic.IReadOnlyList<System.DateTimeOffset> dates) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.Fixed(System.DateTimeOffset date) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.Fixed(System.Func<System.Collections.Generic.IReadOnlyList<System.DateTimeOffset>> datesProvider) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.Fixed(System.Func<System.DateTimeOffset> dateProvider) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.Multi(params Vostok.Applications.Scheduled.IScheduler[] schedulers) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.OnDemand(out System.Action demand) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.OnDemand<TArg>(out System.Action<TArg> demand) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.OnDemandWithFeedback(out System.Func<System.Threading.Tasks.Task> demand) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.OnDemandWithFeedback<TArg>(out System.Func<TArg, System.Threading.Tasks.Task> demand) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.Periodical(System.Func<System.TimeSpan> periodProvider, bool delayFirstIteration = true) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.Periodical(System.Func<System.TimeSpan> periodProvider, System.Func<double> jitterProvider, bool delayFirstIteration = true) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.Periodical(System.TimeSpan period, bool delayFirstIteration = true) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.Periodical(System.TimeSpan period, double jitter, bool delayFirstIteration = true) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.PeriodicalWithConstantPause(System.Func<System.TimeSpan> periodProvider) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.PeriodicalWithConstantPause(System.Func<System.TimeSpan> periodProvider, bool delayFirstIteration) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.PeriodicalWithConstantPause(System.TimeSpan period) -> Vostok.Applications.Scheduled.IScheduler
+static Vostok.Applications.Scheduled.Scheduler.PeriodicalWithConstantPause(System.TimeSpan period, bool delayFirstIteration) -> Vostok.Applications.Scheduled.IScheduler
+virtual Vostok.Applications.Scheduled.VostokScheduledApplication.DoDispose() -> void
+virtual Vostok.Applications.Scheduled.VostokScheduledApplication.DoDisposeAsync() -> System.Threading.Tasks.Task
+virtual Vostok.Applications.Scheduled.VostokScheduledAsyncApplication.DoDisposeAsync() -> System.Threading.Tasks.Task
+Vostok.Applications.Scheduled.ICompositeApplicationBuilderExtensions
+Vostok.Applications.Scheduled.IScheduledActionContext
+Vostok.Applications.Scheduled.IScheduledActionContext.CancellationToken.get -> System.Threading.CancellationToken
+Vostok.Applications.Scheduled.IScheduledActionContext.RemainingTime.get -> System.TimeSpan
+Vostok.Applications.Scheduled.IScheduledActionContext.Scheduler.get -> Vostok.Applications.Scheduled.IScheduler
+Vostok.Applications.Scheduled.IScheduledActionContext.Timestamp.get -> System.DateTimeOffset
+Vostok.Applications.Scheduled.IScheduledActionContextExtensions
+Vostok.Applications.Scheduled.IScheduledActionsBuilder
+Vostok.Applications.Scheduled.IScheduledActionsBuilder.Schedule(string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Action<Vostok.Applications.Scheduled.IScheduledActionContext> payload) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+Vostok.Applications.Scheduled.IScheduledActionsBuilder.Schedule(string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Action<Vostok.Applications.Scheduled.IScheduledActionContext> payload, Vostok.Applications.Scheduled.ScheduledActionOptions options) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+Vostok.Applications.Scheduled.IScheduledActionsBuilder.Schedule(string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Func<Vostok.Applications.Scheduled.IScheduledActionContext, System.Threading.Tasks.Task> payload) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+Vostok.Applications.Scheduled.IScheduledActionsBuilder.Schedule(string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Func<Vostok.Applications.Scheduled.IScheduledActionContext, System.Threading.Tasks.Task> payload, Vostok.Applications.Scheduled.ScheduledActionOptions options) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+Vostok.Applications.Scheduled.IScheduledActionsBuilder.SetupDynamic(System.Action<Vostok.Applications.Scheduled.IScheduledActionsBuilder> configuration, System.TimeSpan actualizationPeriod) -> void
+Vostok.Applications.Scheduled.IScheduledActionsBuilder.SetupDynamic(System.Func<Vostok.Applications.Scheduled.IScheduledActionsBuilder, System.Threading.CancellationToken, System.Threading.Tasks.Task> configuration, System.TimeSpan actualizationPeriod) -> void
+Vostok.Applications.Scheduled.IScheduledActionsBuilderExtensions
+Vostok.Applications.Scheduled.IScheduledActionsRunner
+Vostok.Applications.Scheduled.IScheduledActionsRunner.RunAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+Vostok.Applications.Scheduled.IScheduler
+Vostok.Applications.Scheduled.IScheduler.ScheduleNext(System.DateTimeOffset from) -> System.DateTimeOffset?
+Vostok.Applications.Scheduled.ScheduledActionOptions
+Vostok.Applications.Scheduled.ScheduledActionOptions.ActualizationPeriod.get -> System.TimeSpan
+Vostok.Applications.Scheduled.ScheduledActionOptions.ActualizationPeriod.set -> void
+Vostok.Applications.Scheduled.ScheduledActionOptions.AllowOverlappingExecution.get -> bool
+Vostok.Applications.Scheduled.ScheduledActionOptions.AllowOverlappingExecution.set -> void
+Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnPayloadException.get -> bool
+Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnPayloadException.set -> void
+Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnSchedulerException.get -> bool
+Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnSchedulerException.set -> void
+Vostok.Applications.Scheduled.ScheduledActionOptions.PreferSeparateThread.get -> bool
+Vostok.Applications.Scheduled.ScheduledActionOptions.PreferSeparateThread.set -> void
+Vostok.Applications.Scheduled.ScheduledActionOptions.ScheduledActionOptions() -> void
+Vostok.Applications.Scheduled.ScheduledActionsBuilder
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.BuildRunner() -> Vostok.Applications.Scheduled.IScheduledActionsRunner
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.Schedule(string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Action<Vostok.Applications.Scheduled.IScheduledActionContext> payload) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.Schedule(string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Action<Vostok.Applications.Scheduled.IScheduledActionContext> payload, Vostok.Applications.Scheduled.ScheduledActionOptions options) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.Schedule(string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Func<Vostok.Applications.Scheduled.IScheduledActionContext, System.Threading.Tasks.Task> payload) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.Schedule(string name, Vostok.Applications.Scheduled.IScheduler scheduler, System.Func<Vostok.Applications.Scheduled.IScheduledActionContext, System.Threading.Tasks.Task> payload, Vostok.Applications.Scheduled.ScheduledActionOptions options) -> Vostok.Applications.Scheduled.IScheduledActionsBuilder
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.ScheduledActionsBuilder(Vostok.Logging.Abstractions.ILog log) -> void
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.ScheduledActionsBuilder(Vostok.Logging.Abstractions.ILog log, Vostok.Tracing.Abstractions.ITracer tracer) -> void
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.ScheduledActionsBuilder(Vostok.Logging.Abstractions.ILog log, Vostok.Tracing.Abstractions.ITracer tracer, Vostok.Hosting.Abstractions.IVostokApplicationDiagnostics diagnostics) -> void
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.SetupDynamic(System.Action<Vostok.Applications.Scheduled.IScheduledActionsBuilder> configuration, System.TimeSpan actualizationPeriod) -> void
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.SetupDynamic(System.Func<Vostok.Applications.Scheduled.IScheduledActionsBuilder, System.Threading.CancellationToken, System.Threading.Tasks.Task> configuration, System.TimeSpan actualizationPeriod) -> void
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.ShouldLogScheduledActions.get -> bool
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.ShouldLogScheduledActions.set -> void
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.SupportsDynamicConfiguration.get -> bool
+Vostok.Applications.Scheduled.ScheduledActionsBuilder.SupportsDynamicConfiguration.set -> void
+Vostok.Applications.Scheduled.Scheduler
+Vostok.Applications.Scheduled.VostokScheduledApplication
+Vostok.Applications.Scheduled.VostokScheduledApplication.Dispose() -> void
+Vostok.Applications.Scheduled.VostokScheduledApplication.InitializeAsync(Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment) -> System.Threading.Tasks.Task
+Vostok.Applications.Scheduled.VostokScheduledApplication.RunAsync(Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment) -> System.Threading.Tasks.Task
+Vostok.Applications.Scheduled.VostokScheduledApplication.VostokScheduledApplication() -> void
+Vostok.Applications.Scheduled.VostokScheduledAsyncApplication
+Vostok.Applications.Scheduled.VostokScheduledAsyncApplication.Dispose() -> void
+Vostok.Applications.Scheduled.VostokScheduledAsyncApplication.InitializeAsync(Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment) -> System.Threading.Tasks.Task
+Vostok.Applications.Scheduled.VostokScheduledAsyncApplication.RunAsync(Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment) -> System.Threading.Tasks.Task
+Vostok.Applications.Scheduled.VostokScheduledAsyncApplication.VostokScheduledAsyncApplication() -> void
