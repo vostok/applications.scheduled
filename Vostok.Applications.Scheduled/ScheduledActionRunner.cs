@@ -197,7 +197,7 @@ namespace Vostok.Applications.Scheduled
                     span.SetOperationStatus(null, WellKnownStatuses.Error);
                     monitor.OnIterationFailed(error);
 
-                    if (action.Options.CrashOnPayloadException || error is OperationCanceledException)
+                    if (action.Options.CrashOnPayloadException || error is OperationCanceledException && token.IsCancellationRequested)
                         throw;
 
                     log.Error(error, "Scheduled action threw an exception.");
