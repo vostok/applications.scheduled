@@ -1,3 +1,7 @@
+## 0.2.13 (03-11-2022):
+
+Fixed `OperationCanceledException` handling.
+
 ## 0.2.12 (08-03-2022):
 
 Used new structured OperationContextToken.
