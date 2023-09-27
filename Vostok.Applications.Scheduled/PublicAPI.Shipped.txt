@@ -65,8 +65,12 @@ Vostok.Applications.Scheduled.ScheduledActionOptions.AllowOverlappingExecution.g
 Vostok.Applications.Scheduled.ScheduledActionOptions.AllowOverlappingExecution.set -> void
 Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnPayloadException.get -> bool
 Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnPayloadException.set -> void
+Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnPayloadOutOfMemoryException.get -> bool
+Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnPayloadOutOfMemoryException.set -> void
 Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnSchedulerException.get -> bool
 Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnSchedulerException.set -> void
+Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnSchedulerOutOfMemoryException.get -> bool
+Vostok.Applications.Scheduled.ScheduledActionOptions.CrashOnSchedulerOutOfMemoryException.set -> void
 Vostok.Applications.Scheduled.ScheduledActionOptions.PreferSeparateThread.get -> bool
 Vostok.Applications.Scheduled.ScheduledActionOptions.PreferSeparateThread.set -> void
 Vostok.Applications.Scheduled.ScheduledActionOptions.ScheduledActionOptions() -> void
