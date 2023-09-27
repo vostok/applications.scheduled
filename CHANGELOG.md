@@ -1,3 +1,7 @@
+## 0.2.15 (03-10-2023):
+
+Crash app on `OutOfMemoryException` by default.
+
 ## 0.2.13 (03-11-2022):
 
 Fixed `OperationCanceledException` handling.
