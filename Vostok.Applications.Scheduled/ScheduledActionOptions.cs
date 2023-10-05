@@ -8,9 +8,13 @@ namespace Vostok.Applications.Scheduled
     public class ScheduledActionOptions
     {
         public bool CrashOnPayloadException { get; set; }
-        
+
+        public bool CrashOnPayloadOutOfMemoryException { get; set; } = true;
+
         public bool CrashOnSchedulerException { get; set; }
-     
+
+        public bool CrashOnSchedulerOutOfMemoryException { get; set; } = true;
+
         public bool PreferSeparateThread { get; set; }
 
         public bool AllowOverlappingExecution { get; set; }
