@@ -201,7 +201,8 @@ namespace Vostok.Applications.Scheduled
                     span.SetOperationStatus(null, WellKnownStatuses.Error);
                     monitor.OnIterationFailed(error);
 
-                    if (action.Options.CrashOnPayloadException)
+                    if (action.Options.CrashOnPayloadException
+                        || (action.Options.CrashOnPayloadOutOfMemoryException && error is OutOfMemoryException))
                         throw;
 
                     log.Error(error, "Scheduled action threw an exception.");
@@ -229,6 +230,10 @@ namespace Vostok.Applications.Scheduled
             {
                 return action.Scheduler.ScheduleNextWithSource(from);
             }
+            catch (OutOfMemoryException) when (action.Options.CrashOnSchedulerOutOfMemoryException)
+            {
+                throw;
+            }
             catch (Exception error)
             {
                 if (action.Options.CrashOnSchedulerException)
@@ -245,8 +250,9 @@ namespace Vostok.Applications.Scheduled
             if (nextExecutionTime == null)
                 log.Info("Next execution time: unknown.");
             else
-                log.Info("Next execution time = {NextExecutionTime:yyyy-MM-dd HH:mm:ss.fff} (~{TimeToNextExecution} from now).", 
-                    nextExecutionTime.Value.DateTime, TimeSpanArithmetics.Max(TimeSpan.Zero, nextExecutionTime.Value - PreciseDateTime.Now).ToPrettyString());
+                log.Info("Next execution time = {NextExecutionTime:yyyy-MM-dd HH:mm:ss.fff} (~{TimeToNextExecution} from now).",
+                    nextExecutionTime.Value.DateTime,
+                    TimeSpanArithmetics.Max(TimeSpan.Zero, nextExecutionTime.Value - PreciseDateTime.Now).ToPrettyString());
         }
 
         private void RegisterDiagnostics(IVostokApplicationDiagnostics diagnostics)
