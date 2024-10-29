@@ -1,3 +1,7 @@
+## 0.2.16 (29-10-2024):
+
+Rebuild nuget package to use new version of Hercules.Client.Abstractions.
+
 ## 0.2.15 (03-10-2023):
 
 Crash app on `OutOfMemoryException` by default.
