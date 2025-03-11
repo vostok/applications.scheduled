@@ -8,6 +8,22 @@ notests *default:
   install:
     - Vostok.Applications.Scheduled/bin/Release/netstandard2.0/Vostok.Applications.Scheduled.dll
     - module vostok.hosting.abstractions
+    - groups:
+      - target-framework: "netstandard2.0"
+        libraries:
+          - Vostok.Applications.Scheduled/bin/Release/netstandard2.0/Vostok.Applications.Scheduled.dll
+        modules:
+          - name: vostok.hosting.abstractions
+      - target-framework: "net6.0"
+        libraries:
+          - Vostok.Applications.Scheduled/bin/Release/net6.0/Vostok.Applications.Scheduled.dll
+        modules:
+          - name: vostok.hosting.abstractions
+      - target-framework: "net8.0"
+        libraries:
+          - Vostok.Applications.Scheduled/bin/Release/net8.0/Vostok.Applications.Scheduled.dll
+        modules:
+          - name: vostok.hosting.abstractions
 
   deps:
     - vostok.tracing.extensions
@@ -31,6 +47,26 @@ full-build > notests:
   build:
     target: Vostok.Applications.Scheduled.sln
     configuration: Release
+    
+    install:
+      - Vostok.Applications.Scheduled/bin/Release/netstandard2.0/Vostok.Applications.Scheduled.dll
+      - module vostok.hosting.abstractions
+      - groups:
+        - target-framework: "netstandard2.0"
+          libraries:
+            - Vostok.Applications.Scheduled/bin/Release/netstandard2.0/Vostok.Applications.Scheduled.dll
+          modules:
+            - name: vostok.hosting.abstractions
+        - target-framework: "net6.0"
+          libraries:
+            - Vostok.Applications.Scheduled/bin/Release/net6.0/Vostok.Applications.Scheduled.dll
+          modules:
+            - name: vostok.hosting.abstractions
+        - target-framework: "net8.0"
+          libraries:
+            - Vostok.Applications.Scheduled/bin/Release/net8.0/Vostok.Applications.Scheduled.dll
+          modules:
+            - name: vostok.hosting.abstractions
 
   deps:
     - vostok.commons.testing/src
