@@ -1,3 +1,7 @@
+## 0.2.18 (05-05-2024): 
+
+fix build without net6 runtime
+
 ## 0.2.17 (16-12-2024): 
 
 Bump NuGet deps versions
