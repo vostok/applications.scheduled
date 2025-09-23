@@ -17,6 +17,9 @@ namespace Vostok.Applications.Scheduled
 
         public bool PreferSeparateThread { get; set; }
 
+        /// <summary>
+        /// Warning: using with <see cref="PeriodicalWithConstantPauseScheduler"/> may lead to unexpected consequences.
+        /// </summary>
         public bool AllowOverlappingExecution { get; set; }
 
         public TimeSpan ActualizationPeriod { get; set; } = 1.Seconds();
